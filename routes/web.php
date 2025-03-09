@@ -49,3 +49,9 @@ Route::resource('maintenance', MaintenanceController::class);
 Route::resource('accessoires', AccessoireController::class);
 //route pour commandes 
 Route::resource('commandes', CommandeController::class);
+// routes/web.php
+Route::get('/formulaire', function () {
+    // Récupère les modèles pour le formulaire (si nécessaire)
+    $models = App\Models\CarModel::all();
+    return view('formulaire', compact('models'));
+})->name('formulaire');

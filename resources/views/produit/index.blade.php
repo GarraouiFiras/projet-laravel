@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GF Showroom</title>
-    <style>
+    <!-- Inclure les balises meta et title du layout principal -->
+    @extends('layouts.app')
+
+    <!-- Section pour les styles personnalisés -->
+    
+</head>
+<body>
+<style>
         * {
             margin: 0;
             padding: 0;
@@ -75,9 +79,8 @@
             text-align: center;
         }
     </style>
-</head>
-<body>
-
+    <!-- Section pour le contenu principal -->
+    @section('content')
     <h1>Nos Voitures</h1>
 
     @if ($errors->any())
@@ -91,19 +94,17 @@
     @endif
 
     <div class="car-container">
-    @foreach ($cars as $car)
-        <div class="car-card">
-        <img src="{{ asset('storage/' . $car->image) }}" alt="{{ $car->name }}" class="img-fluid">
-
-            <div class="car-details">
-                <div class="car-type">{{ $car->name }}</div>
-                <div class="car-price">{{ $car->price }}</div>
-                <div class="car-description">{{ $car->description }}</div>
+        @foreach ($cars as $car)
+            <div class="car-card">
+                <img src="{{ asset('storage/' . $car->image) }}" alt="{{ $car->name }}" class="img-fluid">
+                <div class="car-details">
+                    <div class="car-type">{{ $car->name }}</div>
+                    <div class="car-price">{{ $car->price }}</div>
+                    <div class="car-description">{{ $car->description }}</div>
+                </div>
             </div>
-        </div>
-    @endforeach
-</div>
-
-
+        @endforeach
+    </div>
+    @endsection
 </body>
 </html>
