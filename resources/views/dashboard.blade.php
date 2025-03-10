@@ -101,7 +101,7 @@
           <div class="card-body">
             <p><strong>Nom :</strong> {{ Auth::user()->name }}</p>
             <p><strong>Email :</strong> {{ Auth::user()->email }}</p>
-            <p><strong>Date d'inscription :</strong> {{ Auth::user()->created_at->format('d M Y') }}</p>
+            <p><strong>Date d'inscription :</strong> {{ now()->format('d M Y') }}</p>
             <p><strong>Rôle :</strong> {{ Auth::user()->role }}</p>
           </div>
         </div>

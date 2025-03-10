@@ -313,24 +313,26 @@
     <div class="icon">
       <i class="bi bi-tools"></i>
     </div>
-    <a href="{{ route('maintenance.index') }}" class="stretched-link"> <!-- Lien vers la page de maintenance -->
+    <a href="{{ route('maintenance.create') }}" class="stretched-link"> <!-- Lien vers la page de maintenance -->
       <h3>Service après-vente</h3>
     </a>
     <p>Profitez d'un service de maintenance complet avec des techniciens spécialisés pour l'entretien de vos véhicules.</p>
   </div>
 </div><!-- End Service Item -->
 
-    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-      <div class="service-item position-relative">
-        <div class="icon">
-          <i class="bi bi-currency-exchange"></i>
-        </div>
-        <a href="service-details.html" class="stretched-link">
-          <h3>Financement et leasing</h3>
-        </a>
-        <p>Des solutions de financement flexibles adaptées à votre budget, y compris des options de leasing.</p>
-      </div>
-    </div><!-- End Service Item -->
+@if(Auth::check() && (Auth::user()->role === 'technicien' || Auth::user()->role === 'admin'))
+<div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+  <div class="service-item position-relative">
+    <div class="icon">
+      <i class="bi bi-tools"></i>
+    </div>
+    <a href="{{ route('maintenance.index') }}" class="stretched-link"> <!-- Lien vers la page de maintenance -->
+      <h3>Rendez-vous de maintenance</h3>
+    </a>
+    <p>Consultez et gérez la gestion de toutes les Rendez-vous de maintenance</p>
+  </div>
+</div><!-- End Service Item -->
+@endif
 
     <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
       <div class="service-item position-relative">
@@ -344,6 +346,7 @@
       </div>
     </div><!-- End Service Item -->
 
+    @if(Auth::check() && (Auth::user()->role === 'vendeur' || Auth::user()->role === 'admin'))
     <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
     <div class="service-item position-relative">
         <div class="icon">
@@ -355,6 +358,7 @@
         <p>Consultez et gérez toutes vos commandes passées. Suivez l'état de vos achats et accédez aux détails.</p>
     </div>
 </div><!-- End Service Item -->
+@endif
 
 <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
     <div class="service-item position-relative">

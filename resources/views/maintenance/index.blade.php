@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <h1 class="text-center my-4">Rendez-vous de maintenance</h1>
-    <a href="{{ route('maintenance.create') }}" class="btn btn-primary mb-3">Créer un rendez-vous</a>
+    
 
     @if(session('success'))
         <div class="alert alert-success">
