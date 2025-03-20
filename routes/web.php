@@ -49,6 +49,8 @@ Route::resource('maintenance', MaintenanceController::class);
 Route::resource('accessoires', AccessoireController::class);
 //route pour commandes 
 Route::resource('commandes', CommandeController::class);
+Route::get('/commandes/create', [CommandeController::class, 'create'])->name('commandes.create');
+Route::post('/commandes', [CommandeController::class, 'store'])->name('commandes.store');
 // routes/web.php
 Route::get('/formulaire', function () {
     // Récupère les modèles pour le formulaire (si nécessaire)

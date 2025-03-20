@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <h1 class="text-center my-4">Liste des accessoires</h1>
-    <a href="{{ route('accessoires.create') }}" class="btn btn-primary mb-3">Ajouter un accessoire</a>
+    
 
     @if(session('success'))
         <div class="alert alert-success">
@@ -38,11 +38,14 @@
                     <td>{{ $accessoire->stock }}</td>
                     <td>
                         <a href="{{ route('accessoires.show', $accessoire->id) }}" class="btn btn-info btn-sm">Voir</a>
-                        <a href="{{ route('accessoires.edit', $accessoire->id) }}" class="btn btn-warning btn-sm">Modifier</a>
-                        <form action="{{ route('accessoires.destroy', $accessoire->id) }}" method="POST" style="display:inline;">
+                        @if(Auth::check() && (Auth::user()->role === 'gestionnaire' || Auth::user()->role === 'admin'))
+                           <a href="{{ route('accessoires.edit', $accessoire->id) }}" class="btn btn-warning btn-sm">Modifier</a>
+                           <form action="{{ route('accessoires.destroy', $accessoire->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet accessoire ?')">Supprimer</button>
+                              <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet accessoire ?')">Supprimer</button>
+                        </form>
+                             @endif
                         </form>
                     </td>
                 </tr>

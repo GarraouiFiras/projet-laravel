@@ -51,7 +51,7 @@
         <li><a href="#hero" class="active">Accueil</a></li>
         <li><a href="#about">À propos</a></li>
         <li><a href="/produit">Produits</a></li>
-        <li><a href="#showroom">Showroom</a></li>
+        <li><a href="#services">Showroom</a></li>
         <li><a href="#testimonials">Témoignages</a></li>
         <li><a href="#team">Équipe</a></li>
         <li><a href="#contact">Contact</a></li>
@@ -308,10 +308,24 @@
       </div>
     </div><!-- End Service Item -->
 
+    @if(Auth::check() && (Auth::user()->role === 'gestionnaire' || Auth::user()->role === 'admin'))
+    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+      <div class="service-item position-relative">
+        <div class="icon">
+          <i class="bi bi-gear"></i>
+        </div>
+        <a href="{{ route('accessoires.create') }}" class="stretched-link">
+          <h3>Ajout des accessoires </h3>
+        </a>
+        <p>Ce formulaire vous permet d'ajouter un nouvel accessoire à la liste des produits disponibles.</p>
+      </div>
+    </div><!-- End Service Item -->
+    @endif
+
     <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
   <div class="service-item position-relative">
     <div class="icon">
-      <i class="bi bi-tools"></i>
+      <i class="bi bi-person-check"></i>
     </div>
     <a href="{{ route('maintenance.create') }}" class="stretched-link"> <!-- Lien vers la page de maintenance -->
       <h3>Service après-vente</h3>
@@ -324,7 +338,7 @@
 <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
   <div class="service-item position-relative">
     <div class="icon">
-      <i class="bi bi-tools"></i>
+      <i class="bi bi-headset"></i>
     </div>
     <a href="{{ route('maintenance.index') }}" class="stretched-link"> <!-- Lien vers la page de maintenance -->
       <h3>Rendez-vous de maintenance</h3>
@@ -334,17 +348,7 @@
 </div><!-- End Service Item -->
 @endif
 
-    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
-      <div class="service-item position-relative">
-        <div class="icon">
-          <i class="bi bi-shield-check"></i>
-        </div>
-        <a href="service-details.html" class="stretched-link">
-          <h3>Garantie et assurances</h3>
-        </a>
-        <p>Nous offrons des services de garantie étendue et des options d'assurance pour vous protéger lors de vos déplacements.</p>
-      </div>
-    </div><!-- End Service Item -->
+   
 
     @if(Auth::check() && (Auth::user()->role === 'vendeur' || Auth::user()->role === 'admin'))
     <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
@@ -363,7 +367,7 @@
 <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
     <div class="service-item position-relative">
         <div class="icon">
-            <i class="bi bi-cart-check"></i> <!-- Icône représentant les commandes -->
+            <i class="bi bi-cart-plus"></i> <!-- Icône représentant les commandes -->
         </div>
         <a href="{{ route('commandes.create') }}" class="stretched-link">
             <h3>Passer une commande</h3>
@@ -474,120 +478,129 @@
     </div>
   </div>
 
-    </section><!-- /Stats Section -->
+  </section><!-- /Stats Section -->
 
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="testimonials section dark-background">
+<!-- Testimonials Section -->
+<section id="testimonials" class="testimonials section dark-background">
 
-      <img src="assets/img/testimonials-bg.jpg" class="testimonials-bg" alt="">
+  <img src="assets/img/testimonials-bg.jpg" class="testimonials-bg" alt="">
 
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
+  <div class="container" data-aos="fade-up" data-aos-delay="100">
 
-        <div class="swiper init-swiper">
-          <script type="application/json" class="swiper-config">
-            {
-              "loop": true,
-              "speed": 600,
-              "autoplay": {
-                "delay": 5000
-              },
-              "slidesPerView": "auto",
-              "pagination": {
-                "el": ".swiper-pagination",
-                "type": "bullets",
-                "clickable": true
-              }
-            }
-          </script>
-          <div class="swiper-wrapper">
+    <div class="swiper init-swiper">
+      <script type="application/json" class="swiper-config">
+        {
+          "loop": true,
+          "speed": 600,
+          "autoplay": {
+            "delay": 5000
+          },
+          "slidesPerView": "auto",
+          "pagination": {
+            "el": ".swiper-pagination",
+            "type": "bullets",
+            "clickable": true
+          }
+        }
+      </script>
+      <div class="swiper-wrapper">
 
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <img src="assets/img/testimonials/testimonials-1.jpg" class="testimonial-img" alt="">
-                <h3>Saul Goodman</h3>
-                <h4>Ceo &amp; Founder</h4>
-                <div class="stars">
-                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                </div>
-                <p>
-                  <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Proin iaculis purus consequat sem cure digni ssim donec porttitora entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et. Maecen aliquam, risus at semper.</span>
-                  <i class="bi bi-quote quote-icon-right"></i>
-                </p>
-              </div>
-            </div><!-- End testimonial item -->
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <img src="assets/img/testimonials/testimonials-2.jpg" class="testimonial-img" alt="">
-                <h3>Sara Wilsson</h3>
-                <h4>Designer</h4>
-                <div class="stars">
-                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                </div>
-                <p>
-                  <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Export tempor illum tamen malis malis eram quae irure esse labore quem cillum quid cillum eram malis quorum velit fore eram velit sunt aliqua noster fugiat irure amet legam anim culpa.</span>
-                  <i class="bi bi-quote quote-icon-right"></i>
-                </p>
-              </div>
-            </div><!-- End testimonial item -->
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <img src="assets/img/testimonials/testimonials-3.jpg" class="testimonial-img" alt="">
-                <h3>Jena Karlis</h3>
-                <h4>Store Owner</h4>
-                <div class="stars">
-                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                </div>
-                <p>
-                  <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Enim nisi quem export duis labore cillum quae magna enim sint quorum nulla quem veniam duis minim tempor labore quem eram duis noster aute amet eram fore quis sint minim.</span>
-                  <i class="bi bi-quote quote-icon-right"></i>
-                </p>
-              </div>
-            </div><!-- End testimonial item -->
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <img src="assets/img/testimonials/testimonials-4.jpg" class="testimonial-img" alt="">
-                <h3>Matt Brandon</h3>
-                <h4>Freelancer</h4>
-                <div class="stars">
-                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                </div>
-                <p>
-                  <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Fugiat enim eram quae cillum dolore dolor amet nulla culpa multos export minim fugiat minim velit minim dolor enim duis veniam ipsum anim magna sunt elit fore quem dolore labore illum veniam.</span>
-                  <i class="bi bi-quote quote-icon-right"></i>
-                </p>
-              </div>
-            </div><!-- End testimonial item -->
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <img src="assets/img/testimonials/testimonials-5.jpg" class="testimonial-img" alt="">
-                <h3>John Larson</h3>
-                <h4>Entrepreneur</h4>
-                <div class="stars">
-                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                </div>
-                <p>
-                  <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Quis quorum aliqua sint quem legam fore sunt eram irure aliqua veniam tempor noster veniam enim culpa labore duis sunt culpa nulla illum cillum fugiat legam esse veniam culpa fore nisi cillum quid.</span>
-                  <i class="bi bi-quote quote-icon-right"></i>
-                </p>
-              </div>
-            </div><!-- End testimonial item -->
-
+        <!-- Administrateur -->
+        <div class="swiper-slide">
+          <div class="testimonial-item">
+            <img src="assets/img/testimonials/firas.jpg" class="testimonial-img" alt="">
+            <h3>Administrateur</h3>
+            <h4>Gestion du système</h4>
+            <div class="stars">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            </div>
+            <p>
+              <i class="bi bi-quote quote-icon-left"></i>
+              <span>
+                Gère l’ensemble du système :<br>
+                - Ajout, modification, suppression des véhicules, accessoires et services de maintenance.<br>
+                - Gestion des utilisateurs (clients et employés).<br>
+                - Supervision des commandes et des réservations.<br>
+                - Accès aux statistiques et aux rapports de vente.
+              </span>
+              <i class="bi bi-quote quote-icon-right"></i>
+            </p>
           </div>
-          <div class="swiper-pagination"></div>
-        </div>
+        </div><!-- End testimonial item -->
+
+        <!-- Vendeur -->
+        <div class="swiper-slide">
+          <div class="testimonial-item">
+            <img src="assets/img/testimonials/majd.jpg" class="testimonial-img" alt="">
+            <h3>Vendeur</h3>
+            <h4>Équipe du showroom</h4>
+            <div class="stars">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            </div>
+            <p>
+              <i class="bi bi-quote quote-icon-left"></i>
+              <span>
+                Rôle principal :<br>
+                - Gère les commandes.<br>
+                - Assiste les clients dans leurs achats.<br>
+                - Fournit des informations sur les véhicules et accessoires.
+              </span>
+              <i class="bi bi-quote quote-icon-right"></i>
+            </p>
+          </div>
+        </div><!-- End testimonial item -->
+
+        <!-- Technicien -->
+        <div class="swiper-slide">
+          <div class="testimonial-item">
+            <img src="assets/img/testimonials/mohamed.jpg" class="testimonial-img" alt="">
+            <h3>Technicien</h3>
+            <h4>Équipe du showroom</h4>
+            <div class="stars">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            </div>
+            <p>
+              <i class="bi bi-quote quote-icon-left"></i>
+              <span>
+                Rôle principal :<br>
+                - Assure la gestion des services de maintenance.<br>
+                - Diagnostique et répare les véhicules.<br>
+                - Garantit la qualité des services offerts.
+              </span>
+              <i class="bi bi-quote quote-icon-right"></i>
+            </p>
+          </div>
+        </div><!-- End testimonial item -->
+
+        <!-- Gestionnaire des accessoires -->
+        <div class="swiper-slide">
+          <div class="testimonial-item">
+            <img src="assets/img/testimonials/amin.jpg" class="testimonial-img" alt="">
+            <h3>Gestionnaire des accessoires</h3>
+            <h4>Équipe du showroom</h4>
+            <div class="stars">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            </div>
+            <p>
+              <i class="bi bi-quote quote-icon-left"></i>
+              <span>
+                Rôle principal :<br>
+                - Ajoute et met à jour les accessoires disponibles à la vente.<br>
+                - Gère les stocks et les commandes d’accessoires.<br>
+                - Assure la disponibilité des produits pour les clients.
+              </span>
+              <i class="bi bi-quote quote-icon-right"></i>
+            </p>
+          </div>
+        </div><!-- End testimonial item -->
 
       </div>
+      <div class="swiper-pagination"></div>
+    </div>
 
-    </section><!-- /Testimonials Section -->
+  </div>
+
+</section><!-- /Testimonials Section -->
 
     <section id="team" class="team section">
 
@@ -614,7 +627,7 @@
           </div>
           <div class="member-info">
             <h4>Mouhamed Firas Garraoui</h4>
-            <span>Chief Executive Officer</span>
+            <span>Administrateur</span>
           </div>
         </div>
       </div><!-- End Team Member -->
@@ -632,7 +645,7 @@
           </div>
           <div class="member-info">
             <h4>Amin Ben Ali</h4>
-            <span>Product Manager</span>
+            <span>Gestionnaire des accessoires</span>
           </div>
         </div>
       </div><!-- End Team Member -->
@@ -650,7 +663,7 @@
           </div>
           <div class="member-info">
             <h4>Majd Abbassi</h4>
-            <span>CTO</span>
+            <span>Vendeur</span>
           </div>
         </div>
       </div><!-- End Team Member -->
@@ -668,7 +681,7 @@
           </div>
           <div class="member-info">
             <h4>Mouhamed Abbassi</h4>
-            <span>Accountant</span>
+            <span>Technicien</span>
           </div>
         </div>
       </div><!-- End Team Member -->

@@ -9,8 +9,8 @@ class Accessoire extends Model
 {
     protected $fillable = ['nom', 'description', 'prix', 'stock', 'image'];
 
-public function orderItems()
-{
-    return $this->hasMany(OrderItem::class);
-}
+    public function commandeItems()
+    {
+        return $this->hasMany(CommandeItem::class, 'produit_id')->where('type_produit', 'accessoire');
+    }
 }

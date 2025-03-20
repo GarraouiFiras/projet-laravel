@@ -13,4 +13,9 @@ class Commande extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+    public function commandeItems()
+{
+    return $this->hasMany(CommandeItem::class, 'commande_id');
+}
+
 }

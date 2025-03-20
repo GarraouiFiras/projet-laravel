@@ -15,6 +15,7 @@
             <tr>
                 <th>ID</th>
                 <th>Nom du client</th>
+                <th>Articles commandés</th>
                 <th>Total</th>
                 <th>Statut</th>
                 <th>Date</th>
@@ -26,6 +27,19 @@
                 <tr>
                     <td>{{ $commande->id }}</td>
                     <td>{{ $commande->nom_client }}</td>
+                    <td>
+                        <ul>
+                            @foreach($commande->commandeItems as $item)
+                                <li>
+                                    @if($item->type_produit == 'car')
+                                        🚗 Voiture : {{ optional($item->car)->name ?? 'Non disponible' }} 
+                                    @else
+                                        🛠️ Accessoire : {{ optional($item->accessoire)->nom ?? 'Non disponible' }} ({{ $item->quantite }})
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ul>
+                    </td>
                     <td>{{ $commande->total }} €</td>
                     <td>{{ $commande->statut }}</td>
                     <td>{{ $commande->created_at->format('d/m/Y H:i') }}</td>

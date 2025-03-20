@@ -11,7 +11,7 @@ class Car extends Model
 
     // Nom de la table associée au modèle
     protected $table = 'car';
- // Assurez-vous que le nom de la table dans votre base de données est bien 'car'
+ 
 
     // Clé primaire de la table
     protected $primaryKey = 'id'; // Changez 'id' si votre clé primaire a un nom différent
@@ -41,4 +41,8 @@ class Car extends Model
     {
         return $this->belongsTo(Owner::class); // Vérifiez que le modèle 'Owner' existe et est configuré correctement
     }
+    public function commandeItems()
+{
+    return $this->hasMany(CommandeItem::class, 'produit_id')->where('type_produit', 'car');
+}
 }

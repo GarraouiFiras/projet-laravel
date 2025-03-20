@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\car; // Ensure the model name is capitalized
+use App\Models\car; 
 use Illuminate\Support\Facades\Storage;
 use App\Models\Produit;
 use Illuminate\Support\Facades\Log;
@@ -37,7 +37,7 @@ class ProduitController extends Controller
             $validatedData['image'] = $imagePath;
         }
 
-        car::create($validatedData); // Insertion dans la table 'cars'
+        car::create($validatedData); // Insertion dans la table 'car'
 
         Log::info('Car Data:', $validatedData);
 

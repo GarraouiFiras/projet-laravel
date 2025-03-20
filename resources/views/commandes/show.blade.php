@@ -22,14 +22,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($commande->orderItems as $item)
-                        <tr>
-                            <td>{{ $item->accessoire->nom }}</td>
-                            <td>{{ $item->quantite }}</td>
-                            <td>{{ $item->prix_unitaire }} €</td>
-                            <td>{{ $item->quantite * $item->prix_unitaire }} €</td>
-                        </tr>
-                    @endforeach
+                @foreach($commande->commandeItems as $item)
+                   <tr>
+                      <td>{{ optional($item->produit)->nom ?? 'Non disponible' }}</td>
+                      <td>
+                    @if(optional($item->produit)->image)
+                       <img src="{{ asset('storage/' . $item->produit->image) }}" width="100">
+                        @else
+                <span>Aucune image</span>
+                         @endif
+                      </td>
+                     <td>{{ $item->quantite }}</td>
+                       <td>{{ number_format($item->prix_unitaire, 2) }} €</td>
+                      <td>{{ number_format($item->quantite * $item->prix_unitaire, 2) }} €</td>
+                      </tr>
+                 @endforeach
+
                 </tbody>
             </table>
         </div>
