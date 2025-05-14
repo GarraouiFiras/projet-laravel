@@ -7,7 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Maintenance extends Model
 {
-    protected $fillable = ['client_name', 'car_id', 'date', 'time', 'description'];
+   protected $fillable = [
+    'client_name', 'car_id', 'date', 'time', 'description', 'status'
+];
+
     // Définir la relation avec le modèle Car
     public function car()
     {

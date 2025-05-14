@@ -4,19 +4,43 @@ namespace App\Http\Controllers;
 
 use App\Models\Commande;
 use App\Models\CommandeItem;
-use App\Models\car; // Correction : Utiliser Car avec une majuscule
+use App\Models\car; 
 use App\Models\Accessoire;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session; 
 
 class CommandeController extends Controller
 {
     // Afficher la liste des commandes
     public function index()
-    {
+{
+    // Définition des couleurs pour chaque statut
+    $statutColors = [
+        'en_attente' => '#FFA500',     // Orange
+        'en_traitement' => '#3490dc',  // Bleu
+        'expediee' => '#6f42c1',       // Violet
+        'livree' => '#38c172',         // Vert
+        'annulee' => '#e3342f'         // Rouge
+    ];
+
+    // Si l'utilisateur est admin ou vendeur
+    if (Auth::check() && (Auth::user()->role === 'admin' || Auth::user()->role === 'vendeur')) {
         $commandes = Commande::all();
-        return view('commandes.index', compact('commandes'));
+    } 
+    // Si client non connecté (session)
+    elseif (Session::has('derniere_commande_id')) {
+        $commandes = Commande::where('id', Session::get('derniere_commande_id'))->get();
     }
+    else {
+        $commandes = collect();
+    }
+
+    return view('commandes.index', [
+        'commandes' => $commandes,
+        'statutColors' => $statutColors
+    ]);
+}
 
     // Afficher le formulaire de création d'une commande
     public function create()
@@ -87,28 +111,81 @@ class CommandeController extends Controller
 
     // Mise à jour du total dans la commande
     $commande->update(['total' => $total]);
+    // Stocker l'ID de la commande dans la session
+    Session::put('derniere_commande_id', $commande->id);
+
 
     return redirect()->route('commandes.index')->with('success', 'Commande passée avec succès.');
 }
 
-    // Afficher les détails d'une commande
-    public function show(Commande $commande)
-    {
-        return view('commandes.show', compact('commande'));
-    }
-    public function destroy($id)
-    {
-        // Trouver la commande par son ID
-        $commande = Commande::findOrFail($id);
+   // Afficher les détails d'une commande
+   public function show(Commande $commande)
+   {
+       // Autoriser admin/vendeur ou vérifier l'appartenance de la commande
+       if (Auth::check() && in_array(Auth::user()->role, ['admin', 'vendeur'])) {
+           return view('commandes.show', compact('commande'));
+       }
 
-        // Supprimer les éléments de commande associés
-        $commande->commandeItems()->delete();
+       if (Session::get('derniere_commande_id') != $commande->id) {
+           abort(403, 'Accès non autorisé à cette commande');
+       }
 
-        // Supprimer la commande elle-même
-        $commande->delete();
+       return view('commandes.show', compact('commande'));
+   }
+   public function edit(Commande $commande)
+      {
+        // Vérifier les autorisations
+         if (!auth()->check() || !in_array(auth()->user()->role, ['admin', 'vendeur'])) {
+        abort(403, 'Accès non autorisé');
+     }
     
 
-        // Rediriger avec un message de succès
-        return redirect()->route('commandes.index')->with('success', 'Commande supprimée avec succès.');
+    return view('commandes.edit', [
+        'commande' => $commande,
+        'statuts' => [
+            'en_attente' => 'En attente',
+            'en_traitement' => 'En traitement',
+            'expediee' => 'Expédiée',
+            'livree' => 'Livrée',
+            'annulee' => 'Annulée'
+        ]
+    ]);
+}
+public function update(Request $request, Commande $commande)
+{
+    // Vérifier les autorisations
+    if (!auth()->check() || !in_array(auth()->user()->role, ['admin', 'vendeur'])) {
+        abort(403, 'Accès non autorisé');
     }
+
+    $validated = $request->validate([
+        'statut' => 'required|in:en_attente,en_traitement,expediee,livree,annulee'
+    ]);
+
+    $commande->update($validated);
+
+    return redirect()->route('commandes.index')
+                    ->with('success', 'Statut de la commande mis à jour avec succès');
+}
+
+   // Supprimer une commande
+   public function destroy(Commande $commande)
+   {
+       // Autoriser admin ou vérifier l'appartenance de la commande
+       if (Auth::check() && Auth::user()->role === 'admin') {
+           $commande->commandeItems()->delete();
+           $commande->delete();
+           return redirect()->route('commandes.index')->with('success', 'Commande supprimée.');
+       }
+
+       if (Session::get('derniere_commande_id') != $commande->id) {
+           abort(403, 'Accès non autorisé');
+       }
+
+       $commande->commandeItems()->delete();
+       $commande->delete();
+       Session::forget('derniere_commande_id');
+
+       return redirect()->route('commandes.index')->with('success', 'Votre commande a été annulée.');
+   }
 }

@@ -8,68 +8,149 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f8f9fa;
-            padding: 20px;
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('assets/img/art.jpg'); /* Image de fond */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            margin: 0;
+            padding: 0;
         }
+
         .signup-container {
             max-width: 500px;
             margin: 0 auto;
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 40px 50px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
+
+        /* Nouveau style pour le logo */
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            width: 100px;
+            height: auto;
+        }
+
         .signup-container h1 {
             text-align: center;
             margin-bottom: 20px;
+            font-size: 1.8em;
+            color: #000;
+        }
+
+        .signup-container p {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #000;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #000;
+        }
+
+        .form-control {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 12px;
+            font-size: 1em;
+            color: #333;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #6c63ff;
+            box-shadow: 0 0 6px rgba(108, 99, 255, 0.3);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background-color: #6c63ff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #4e46cc;
+            transform: translateY(-3px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .text-danger {
+            color: #ff4d4d;
+            font-size: 0.9em;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
-<div class="signup-container">
-    <h1>{{ $title }}</h1>
-    <p class="text-center">Veuillez remplir le formulaire pour vous inscrire.</p>
-    <form action="{{ route('signup.store') }}" method="POST">
-
-    @csrf
-    <!-- Nom complet -->
-    <div class="mb-3">
-        <label for="name" class="form-label">Nom complet</label>
-        <input type="text" class="form-control" id="name" name="name" placeholder="Entrez votre nom complet" required>
-        @error('name')
-            <div class="text-danger">{{ $message }}</div>
-        @enderror
+    <div class="signup-container">
+        <!-- Ajout du logo GF -->
+        <div class="logo">
+            <img src="{{ asset('assets/img/logoo.png') }}" alt="Logo GF">
+        </div>
+        
+        <h1>{{ $title }}</h1>
+        <p>Veuillez remplir le formulaire pour vous inscrire.</p>
+        
+        <form action="{{ route('signup.store') }}" method="POST">
+            @csrf
+            <!-- Nom complet -->
+            <div class="mb-3">
+                <label for="name" class="form-label">Nom complet</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Entrez votre nom complet" required>
+                @error('name')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
+            </div>
+            <!-- Email -->
+            <div class="mb-3">
+                <label for="email" class="form-label">Adresse e-mail</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="nom@exemple.com" required>
+                @error('email')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
+            </div>
+            <!-- Mot de passe -->
+            <div class="mb-3">
+                <label for="password" class="form-label">Mot de passe</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Entrez votre mot de passe" required>
+                @error('password')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
+            </div>
+            <!-- Confirmer le mot de passe -->
+            <div class="mb-3">
+                <label for="confirm_password" class="form-label">Confirmez le mot de passe</label>
+                <input type="password" class="form-control" id="confirm_password" name="password_confirmation" placeholder="Confirmez votre mot de passe" required>
+            </div>
+            <!-- Bouton d'inscription -->
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">S'inscrire</button>
+            </div>
+        </form>
     </div>
-    <!-- Email -->
-    <div class="mb-3">
-        <label for="email" class="form-label">Adresse e-mail</label>
-        <input type="email" class="form-control" id="email" name="email" placeholder="nom@exemple.com" required>
-        @error('email')
-            <div class="text-danger">{{ $message }}</div>
-        @enderror
-    </div>
-    <!-- Mot de passe -->
-    <div class="mb-3">
-        <label for="password" class="form-label">Mot de passe</label>
-        <input type="password" class="form-control" id="password" name="password" placeholder="Entrez votre mot de passe" required>
-        @error('password')
-            <div class="text-danger">{{ $message }}</div>
-        @enderror
-    </div>
-    <!-- Confirmer le mot de passe -->
-    <div class="mb-3">
-        <label for="confirm_password" class="form-label">Confirmez le mot de passe</label>
-        <input type="password" class="form-control" id="confirm_password" name="password_confirmation" placeholder="Confirmez votre mot de passe" required>
-    </div>
-    <!-- Bouton d'inscription -->
-    <div class="d-grid">
-        <button type="submit" class="btn btn-primary">S'inscrire</button>
-    </div>
-</form>
-
-</div>
-
-
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

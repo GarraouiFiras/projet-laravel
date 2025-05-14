@@ -13,10 +13,30 @@ use App\Models\CarModel;
 
 class ProduitController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $cars = car::all(); // Utilisation correcte du modèle 'car'
-        return view('produit.index', compact('cars'));
+        $models = CarModel::all(); // Pour alimenter la liste déroulante
+    
+        $query = Car::with('model'); // On charge la relation avec le modèle
+    
+        // Filtrage par modèle (ID du modèle)
+        if ($request->filled('model_id')) {
+            $query->where('model', $request->model_id);
+        }
+    
+        // Filtrage par prix minimum
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+    
+        // Filtrage par prix maximum
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price);
+        }
+    
+        $cars = $query->get();
+    
+        return view('produit.index', compact('cars', 'models'));
     }
 
     public function store(Request $request)

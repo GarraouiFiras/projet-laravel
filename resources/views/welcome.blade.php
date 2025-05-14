@@ -64,6 +64,7 @@
       @if(auth()->user()->role === 'admin') <!-- Vérification du rôle admin -->
       <li><a href="{{ route('formulaire') }}">Ajouter une Voiture</a></li> <!-- Bouton Ajouter une Voiture -->
       <li><a href="/users">Users</a></li> <!-- Option Users -->
+      <li><a href="/statistiques">Statistiques</a></li> <!-- Statistiques -->
       @endif
     @endauth 
           </ul>
@@ -95,7 +96,7 @@
 
   <section id="hero" class="hero section dark-background">
 
-  <img src="assets/img/car.jpg" alt="Showroom de voitures" data-aos="fade-in">
+  <img src="assets/img/art.jpg" alt="Showroom de voitures" data-aos="fade-in">
 
   <div class="container">
     <div class="row justify-content-center text-center" data-aos="fade-up" data-aos-delay="100">
@@ -602,7 +603,7 @@
 
 </section><!-- /Testimonials Section -->
 
-    <section id="team" class="team section">
+<section id="team" class="team section ">
 
   <!-- Section Title -->
   <div class="container section-title" data-aos="fade-up">
@@ -826,7 +827,7 @@
 
           <div class="col-lg-4 col-md-12 footer-newsletter">
             <h4>Our Newsletter</h4>
-            <p>Subscribe to our newsletter and receive the latest news about our products and services!</p>
+            <p>Subscribe to our showroom and receive the latest news about our products and services!</p>
             <form action="forms/newsletter.php" method="post" class="php-email-form">
               <div class="newsletter-form"><input type="email" name="email"><input type="submit" value="Subscribe"></div>
               <div class="loading">Loading</div>
@@ -841,13 +842,13 @@
 
     <div class="copyright">
       <div class="container text-center">
-        <p>© <span>Copyright</span> <strong class="px-1 sitename">GP</strong> <span>All Rights Reserved</span></p>
+        <p>© <span>Copyright</span> <strong class="px-1 sitename">GF</strong> <span>All Rights Reserved</span></p>
         <div class="credits">
           <!-- All the links in the footer should remain intact. -->
           <!-- You can delete the links only if you've purchased the pro version. -->
           <!-- Licensing information: https://bootstrapmade.com/license/ -->
           <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-          Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+          Designed by <a href="https://bootstrapmade.com/">Garraoui Firas</a>
         </div>
       </div>
     </div>

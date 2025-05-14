@@ -45,4 +45,9 @@ class Car extends Model
 {
     return $this->hasMany(CommandeItem::class, 'produit_id')->where('type_produit', 'car');
 }
+public function model()
+{
+    return $this->belongsTo(CarModel::class, 'model');
+}
+
 }

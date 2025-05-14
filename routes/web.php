@@ -9,6 +9,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\AccessoireController;
 use App\Http\Controllers\CommandeController;
+use App\Http\Controllers\StatisticsController;
+//use App\Http\Controllers\Auth\ForgotPasswordController;
+//use App\Http\Controllers\Auth\ResetPasswordController;
+
 
 
 // Redirection de la racine ("/") vers la page d'accueil
@@ -45,6 +49,14 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 //Route du maintenance 
 Route::resource('maintenance', MaintenanceController::class);
+// Route pour afficher le formulaire d'édition
+Route::get('/maintenance/{maintenance}/edit', [MaintenanceController::class, 'edit'])
+    ->name('maintenance.edit');
+
+// Route pour traiter la mise à jour
+Route::put('/maintenance/{maintenance}', [MaintenanceController::class, 'update'])
+    ->name('maintenance.update');
+
 //route pour accessoires 
 Route::resource('accessoires', AccessoireController::class);
 //route pour commandes 
@@ -57,3 +69,21 @@ Route::get('/formulaire', function () {
     $models = App\Models\CarModel::all();
     return view('formulaire', compact('models'));
 })->name('formulaire');
+
+// Mot de passe oublié
+Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
+Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])->name('password.email');
+
+// Réinitialisation du mot de passe
+Route::get('/reset-password/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [AuthController::class, 'reset'])->name('password.update');
+
+// Routes protégées par le middleware auth pour les statistiques
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [StatisticsController::class, 'dashboardStats'])->name('dashboard');
+    Route::get('/statistiques', [StatisticsController::class, 'statistics'])->name('statistics');
+});
+
+Route::middleware(['auth'])->prefix('api')->group(function () {
+    Route::get('/statistics', [StatisticsController::class, 'apiStatistics']);
+});

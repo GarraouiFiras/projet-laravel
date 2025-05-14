@@ -10,9 +10,39 @@ use Illuminate\Support\Facades\Storage;
 class AccessoireController extends Controller
 {
     // Afficher la liste des accessoires
-    public function index()
+    public function index(Request $request)
     {
-        $accessoires = Accessoire::all();
+        $query = Accessoire::query();
+    
+        // Filtre par nom
+        if ($request->filled('nom')) {
+            $query->where('nom', 'like', '%'.$request->nom.'%');
+        }
+    
+        // Filtre par prix minimum
+        if ($request->filled('prix_min')) {
+            $query->where('prix', '>=', $request->prix_min);
+        }
+    
+        // Filtre par prix maximum
+        if ($request->filled('prix_max')) {
+            $query->where('prix', '<=', $request->prix_max);
+        }
+    
+        // Filtre par stock minimum
+        if ($request->filled('stock_min')) {
+            $query->where('stock', '>=', $request->stock_min);
+        }
+    
+        // Tri des colonnes
+        if ($request->has('sort') && $request->has('direction')) {
+            $query->orderBy($request->sort, $request->direction);
+        } else {
+            $query->orderBy('nom'); // Tri par défaut
+        }
+    
+        $accessoires = $query->paginate(10);
+    
         return view('accessoires.index', compact('accessoires'));
     }
 

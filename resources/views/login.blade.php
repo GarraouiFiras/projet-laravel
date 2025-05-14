@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - Showroom</title>
     <style>
         * {
             box-sizing: border-box;
@@ -17,25 +17,48 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #e0e0e0, #f5f5f5); /* Arrière-plan professionnel avec un dégradé léger */
+            background-image: url('assets/img/art.jpg'); /* Image de fond */
+            background-size: cover; /* Couvre toute la page */
+            background-position: center; /* Centre l'image */
+            background-repeat: no-repeat; /* Empêche la répétition */
             color: #333;
         }
 
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+        }
+
         form {
-            background-color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.1); /* Fond semi-transparent */
             padding: 40px 50px;
             border-radius: 12px;
+            backdrop-filter: blur(10px); /* Effet de flou pour améliorer la lisibilité */
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
             animation: fadeIn 1s ease-in-out;
         }
 
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            width: 100px; /* Ajustez la taille du logo selon vos besoins */
+            height: auto;
+        }
+
         h1 {
             text-align: center;
             margin-bottom: 30px;
             font-size: 1.8em;
-            color: #444;
+            color: #000;
         }
 
         label {
@@ -52,7 +75,7 @@
             margin-bottom: 20px;
             border: 1px solid #ddd;
             border-radius: 5px;
-            background-color: #f9f9f9;
+            background-color: rgba(255, 255, 255, 0.8); /* Fond semi-transparent pour les champs */
             font-size: 1em;
             color: #333;
         }
@@ -95,6 +118,23 @@
             text-align: center;
         }
 
+        .links {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .links a {
+            color: #6c63ff;
+            text-decoration: none;
+            font-size: 0.9em;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: #4e46cc;
+        }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -108,19 +148,33 @@
     </style>
 </head>
 <body>
-    <form action="{{ route('login') }}" method="POST">
-        <h1>Se connecter</h1>
-        @csrf
-        @if (session('error'))
-            <div class="error">{{ session('error') }}</div>
-        @endif
-        <label for="email">Email :</label>
-        <input type="email" id="email" name="email" placeholder="Entrez votre email" required>
+    <div class="container">
+        <!-- Formulaire de connexion -->
+        <form action="{{ route('login') }}" method="POST">
+            <!-- Logo GF dans le formulaire -->
+            <div class="logo">
+                <img src="assets/img/logoo.png" alt="Logo GF">
+            </div>
 
-        <label for="password">Mot de passe :</label>
-        <input type="password" id="password" name="password" placeholder="Entrez votre mot de passe" required>
+            <h1>Se connecter</h1>
+            @csrf
+            @if (session('error'))
+                <div class="error">{{ session('error') }}</div>
+            @endif
+            <label for="email">Email :</label>
+            <input type="email" id="email" name="email" placeholder="Entrez votre email" required>
 
-        <button type="submit">Connexion</button>
-    </form>
+            <label for="password">Mot de passe :</label>
+            <input type="password" id="password" name="password" placeholder="Entrez votre mot de passe" required>
+
+            <button type="submit">Connexion</button>
+
+            <div class="links">
+            <a href="{{ route('password.request') }}">Mot de passe oublié ?</a>
+                <a class="btn-getstarted" href="/signup">S'inscrire</a>
+
+            </div>
+        </form>
+    </div>
 </body>
 </html>

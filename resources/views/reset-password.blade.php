@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter un Accessoire - Showroom</title>
+    <title>Réinitialiser le mot de passe - Showroom</title>
     <style>
         * {
             box-sizing: border-box;
@@ -17,7 +17,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-image: url('{{ asset("assets/img/art.jpg") }}');
+            background-image: url("{{ asset('assets/img/art.jpg') }}"); /* Chemin absolu */
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -40,7 +40,7 @@
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 500px;
+            max-width: 400px;
             animation: fadeIn 1s ease-in-out;
         }
 
@@ -68,11 +68,8 @@
             color: #555;
         }
 
-        input[type="text"],
-        input[type="number"],
-        textarea,
-        select,
-        input[type="file"] {
+        input[type="email"],
+        input[type="password"] {
             width: 100%;
             padding: 12px;
             margin-bottom: 20px;
@@ -80,20 +77,14 @@
             border-radius: 5px;
             background-color: rgba(255, 255, 255, 0.8);
             font-size: 1em;
-            color: #000;
+            color: #333;
         }
 
-        input:focus,
-        textarea:focus,
-        select:focus {
+        input[type="email"]:focus,
+        input[type="password"]:focus {
             outline: none;
             border-color: #6c63ff;
             box-shadow: 0 0 6px rgba(108, 99, 255, 0.3);
-        }
-
-        textarea {
-            min-height: 100px;
-            resize: vertical;
         }
 
         button {
@@ -117,6 +108,33 @@
             transform: translateY(0);
         }
 
+        .error {
+            background-color: rgba(255, 0, 0, 0.1);
+            padding: 10px;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 5px;
+            margin-bottom: 15px;
+            color: #d00;
+            text-align: center;
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .links a {
+            color: #6c63ff;
+            text-decoration: none;
+            font-size: 0.9em;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: #4e46cc;
+        }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -131,31 +149,38 @@
 </head>
 <body>
     <div class="container">
-        <form action="{{ route('accessoires.store') }}" method="POST" enctype="multipart/form-data">
-            <!-- Logo -->
+        <form action="{{ route('password.update') }}" method="POST">
+            <!-- Logo GF dans le formulaire -->
             <div class="logo">
-                <img src="{{ asset('assets/img/logoo.png') }}" alt="Logo Showroom">
+                <img src="{{ asset('assets/img/logoo.png') }}" alt="Logo GF"> <!-- Chemin absolu -->
             </div>
 
-            <h1>Ajouter un Accessoire</h1>
+            <h1>Réinitialiser le mot de passe</h1>
             @csrf
-            
-            <label for="nom">Nom de l'accessoire</label>
-            <input type="text" name="nom" id="nom" required>
-            
-            <label for="description">Description</label>
-            <textarea name="description" id="description"></textarea>
-            
-            <label for="prix">Prix (TND)</label>
-            <input type="number" name="prix" id="prix" step="0.01" required>
-            
-            <label for="stock">Quantité en stock</label>
-            <input type="number" name="stock" id="stock" required>
-            
-            <label for="image">Image de l'accessoire</label>
-            <input type="file" name="image" id="image" accept="image/*" required>
-            
-            <button type="submit">Enregistrer l'accessoire</button>
+            <input type="hidden" name="token" value="{{ $token }}">
+
+            @if ($errors->any())
+                <div class="error">
+                    @foreach ($errors->all() as $error)
+                        {{ $error }}
+                    @endforeach
+                </div>
+            @endif
+
+            <label for="email">Email :</label>
+            <input type="email" id="email" name="email" value="{{ $email ?? old('email') }}" required readonly>
+
+            <label for="password">Nouveau mot de passe :</label>
+            <input type="password" id="password" name="password" placeholder="Entrez votre nouveau mot de passe" required>
+
+            <label for="password_confirmation">Confirmez le mot de passe :</label>
+            <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirmez votre mot de passe" required>
+
+            <button type="submit">Réinitialiser le mot de passe</button>
+
+            <div class="links">
+                <a href="{{ route('login') }}">Retour à la connexion</a>
+            </div>
         </form>
     </div>
 </body>
