@@ -165,16 +165,7 @@
                         <a class="nav-link active smooth-transition" href="/">Accueil</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item d-flex align-items-center">
-                      <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="mt-auto" style="color: red;">
-  <i class="fas fa-sign-out-alt"></i> <span>Déconnexion</span>
-</a>
-<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-  @csrf
-</form>
-                    </li>
-                </ul>
+                
             </div>
         </div>
     </nav>

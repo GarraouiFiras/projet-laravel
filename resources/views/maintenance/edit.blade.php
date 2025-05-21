@@ -190,7 +190,20 @@
             <label class="form-label">Heure</label>
             <input type="time" name="time" class="form-control" value="{{ $maintenance->time }}">
         </div>
-        
+        <div class="mb-3">
+    <label class="form-label">Type de rendez-vous</label>
+    <select name="appointment_type" class="form-control" required>
+        <option value="">Sélectionnez le type</option>
+        <option value="diagnostic" {{ $maintenance->appointment_type == 'diagnostic' ? 'selected' : '' }}>Diagnostic</option>
+        <option value="oil_change" {{ $maintenance->appointment_type == 'oil_change' ? 'selected' : '' }}>Vidange</option>
+        <option value="electrical" {{ $maintenance->appointment_type == 'electrical' ? 'selected' : '' }}>Problème électrique</option>
+        <option value="mechanical" {{ $maintenance->appointment_type == 'mechanical' ? 'selected' : '' }}>Problème mécanique</option>
+        <option value="tires" {{ $maintenance->appointment_type == 'tires' ? 'selected' : '' }}>Pneus/Alignement</option>
+        <option value="brakes" {{ $maintenance->appointment_type == 'brakes' ? 'selected' : '' }}>Freinage</option>
+        <option value="other" {{ $maintenance->appointment_type == 'other' ? 'selected' : '' }}>Autre</option>
+    </select>
+</div>
+
         <div class="mb-3">
             <label class="form-label">Description</label>
             <textarea name="description" class="form-control">{{ $maintenance->description }}</textarea>

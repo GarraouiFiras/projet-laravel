@@ -1,17 +1,21 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Maintenance; // Importer le modèle Maintenance
-use App\Models\Car; // Importer le modèle Car si nécessaire
+use App\Models\Maintenance; 
+use App\Models\car; 
 use Illuminate\Http\Request;
 
 class MaintenanceController extends Controller
 {
     // Afficher la liste des rendez-vous
-   public function index(Request $request)
+  public function index(Request $request)
 {
-    $query = Maintenance::with('car');
+     $query = Maintenance::with(['car', 'user']);
     
+    if ($request->has('appointment_type') && $request->appointment_type) {
+            $query->where('appointment_type', $request->appointment_type);
+        }
+        
     // Filtre par nom de client
     if ($request->has('client')) {
         $query->where('client_name', 'like', '%'.$request->client.'%');
@@ -26,17 +30,34 @@ class MaintenanceController extends Controller
     if ($request->has('date') && $request->date) {
         $query->whereDate('date', $request->date);
     }
-     if ($request->has('status') && $request->status) {
+    
+    if ($request->has('status') && $request->status) {
         $query->where('status', $request->status);
     }
     
     $maintenances = $query->paginate(10);
-    $cars = Car::all(); // Pour la liste déroulante des voitures
-    
-       return view('maintenance.index', [
+    $cars = Car::all();
+
+    $statuses = [
+        'pending' => 'En attente', 
+        'confirmed' => 'Confirmé', 
+        'completed' => 'Terminé', 
+        'canceled' => 'Annulé'
+    ];
+
+    // Retour différent pour les requêtes AJAX
+    if ($request->ajax()) {
+        return view('maintenance.partial', [
+            'maintenances' => $maintenances,
+            'cars' => $cars,
+            'statuses' => $statuses
+        ]);
+    }
+
+    return view('maintenance.index', [
         'maintenances' => $maintenances,
         'cars' => $cars,
-        'statuses' => ['pending' => 'En attente', 'confirmed' => 'Confirmé', 'completed' => 'Terminé', 'canceled' => 'Annulé']
+        'statuses' => $statuses
     ]);
 }
 
@@ -48,20 +69,42 @@ class MaintenanceController extends Controller
     }
 
     // Enregistrer un nouveau rendez-vous
-    public function store(Request $request)
-    {
-        $request->validate([
-            'client_name' => 'required|string|max:255',
-            'car_id' => 'required|exists:car,id',
-            'date' => 'required|date',
-            'time' => 'required',
-            'description' => 'nullable|string',
-        ]);
+  public function store(Request $request)
+{
+    $request->validate([
+        'user_id' => 'required|exists:users,id',
+        'car_id' => 'required|exists:car,id',
+        'appointment_type' => 'required|string',
+        'date' => 'required|date',
+        'time' => 'required',
+        'description' => 'nullable|string',
+    ]);
 
-        Maintenance::create($request->all());
+    $maintenance = new Maintenance();
+    $maintenance->user_id = $request->user_id;
+    $maintenance->car_id = $request->car_id;
+    $maintenance->appointment_type = $request->appointment_type;
+    $maintenance->date = $request->date;
+    $maintenance->time = $request->time;
+    $maintenance->description = $request->description;
+    $maintenance->save();
 
-        return redirect()->route('maintenance.index')->with('success', 'Rendez-vous enregistré avec succès.');
-    }
+    return redirect()->route('clients.dashboard')
+           ->with('success', 'Rendez-vous enregistré avec succès.');
+}
+
+private function getAppointmentTypes()
+{
+    return [
+        'diagnostic' => 'Diagnostic',
+        'oil_change' => 'Vidange',
+        'electrical' => 'Problème électrique',
+        'mechanical' => 'Problème mécanique',
+        'tires' => 'Pneus/Alignement',
+        'brakes' => 'Freinage',
+        'other' => 'Autre',
+    ];
+}
 
     // Afficher les détails d'un rendez-vous
     public function show(Maintenance $maintenance)
@@ -78,26 +121,28 @@ class MaintenanceController extends Controller
 
     public function update(Request $request, Maintenance $maintenance)
     {
-    $validated = $request->validate([
-        'status' => 'required|in:pending,confirmed,completed,canceled',
-        'date' => 'required|date',
-        'time' => 'required',
-        'description' => 'nullable|string',
-    ]);
+        $validated = $request->validate([
+            'appointment_type' => 'required|in:diagnostic,oil_change,electrical,mechanical,tires,brakes,other',
+            'status' => 'required|in:pending,confirmed,completed,canceled',
+            'date' => 'required|date',
+            'time' => 'required',
+            'description' => 'required',
+        ]);
 
-    $maintenance->update($validated);
+        $maintenance->update($validated);
 
-    return redirect()->route('maintenance.index')
-        ->with('success', 'Rendez-vous mis à jour avec succès');
+        return redirect()->route('maintenance.index')
+            ->with('success', 'Rendez-vous mis à jour avec succès');
     }
 
 
-    public function edit(Maintenance $maintenance)
+   public function edit(Maintenance $maintenance)
     {
-    return view('maintenance.edit', [
-        'maintenance' => $maintenance,
-        'statuses' => ['pending' => 'En attente', 'confirmed' => 'Confirmé', 'completed' => 'Terminé', 'canceled' => 'Annulé']
-    ]);
+        return view('maintenance.edit', [
+            'maintenance' => $maintenance,
+            'statuses' => ['pending' => 'En attente', 'confirmed' => 'Confirmé', 'completed' => 'Terminé', 'canceled' => 'Annulé'],
+            'appointmentTypes' => $this->getAppointmentTypes()
+        ]);
     }
 
     public function updateStatus(Request $request, Maintenance $maintenance)

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Commande extends Model
 {
-    protected $fillable = ['nom_client', 'total', 'statut'];
+   protected $fillable = ['nom_client', 'total', 'statut', 'user_id'];
 
     public function orderItems()
     {
@@ -17,5 +17,9 @@ class Commande extends Model
 {
     return $this->hasMany(CommandeItem::class, 'commande_id');
 }
+ public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
 }

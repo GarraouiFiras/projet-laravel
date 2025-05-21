@@ -1709,6 +1709,18 @@ section,
   margin-right: 8px;
   color: var(--accent-color);
 }
+.profile-initials {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    margin-left: 10px;
+}
 
 /*--------------------------------------------------------------
 # Starter Section Section

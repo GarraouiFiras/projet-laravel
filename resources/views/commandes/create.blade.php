@@ -142,11 +142,11 @@
     <form action="{{ route('commandes.store') }}" method="POST">
         @csrf
 
-        <!-- Champ pour le nom du client -->
+        <!-- Champ pour le nom du client 
         <div class="form-group">
             <label for="nom_client">Votre nom</label>
             <input type="text" name="nom_client" id="nom_client" class="form-control" placeholder="Entrez votre nom" required>
-        </div>
+        </div>-->
 
         <div class="row">
             <!-- Section des voitures -->

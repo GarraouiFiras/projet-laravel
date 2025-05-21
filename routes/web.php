@@ -10,6 +10,7 @@ use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\AccessoireController;
 use App\Http\Controllers\CommandeController;
 use App\Http\Controllers\StatisticsController;
+use App\Http\Controllers\ClientController;
 //use App\Http\Controllers\Auth\ForgotPasswordController;
 //use App\Http\Controllers\Auth\ResetPasswordController;
 
@@ -57,13 +58,21 @@ Route::get('/maintenance/{maintenance}/edit', [MaintenanceController::class, 'ed
 Route::put('/maintenance/{maintenance}', [MaintenanceController::class, 'update'])
     ->name('maintenance.update');
 
+    Route::post('/maintenance', [MaintenanceController::class, 'store'])->name('maintenance.store');
+
+
 //route pour accessoires 
 Route::resource('accessoires', AccessoireController::class);
 //route pour commandes 
 Route::resource('commandes', CommandeController::class);
 Route::get('/commandes/create', [CommandeController::class, 'create'])->name('commandes.create');
 Route::post('/commandes', [CommandeController::class, 'store'])->name('commandes.store');
-// routes/web.php
+/*Route::middleware(['auth'])->group(function () {
+    Route::put('/admin/commandes/{commande}', [CommandeController::class, 'update'])->name('commandes.update');
+});*/
+
+
+// 
 Route::get('/formulaire', function () {
     // Récupère les modèles pour le formulaire (si nécessaire)
     $models = App\Models\CarModel::all();
@@ -87,3 +96,37 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth'])->prefix('api')->group(function () {
     Route::get('/statistics', [StatisticsController::class, 'apiStatistics']);
 });
+
+
+// route de clients 
+// Routes protégées par middleware 'auth'
+Route::middleware(['auth'])->group(function () {
+
+    // Espace client
+    Route::get('/mon-compte', [ClientController::class, 'dashboard'])->name('client.dashboard');
+
+    // Mise à jour d'une commande (du client)
+    Route::put('/mes-commandes/{commande}', [ClientController::class, 'updateCommande'])->name('client.commandes.update');
+
+    // Gestion des rendez-vous (mise à jour et suppression)
+   // Route::put('/rendezvous/{rendezvous}', [ClientController::class, 'updateRendezVous'])->name('client.rendezvous.update');
+    // Ajoutez cette route avec les autres routes de votre application
+Route::delete('/rendezvous/{rendezvous}', [ClientController::class, 'destroyRendezVous'])
+     ->name('client.rendezvous.destroy')
+     ->middleware('auth');
+
+    // Suppression d'une commande (globale)
+    Route::delete('/commandes/{commande}', [CommandeController::class, 'destroy'])->name('commandes.destroy');
+});
+
+
+
+
+
+
+
+
+
+
+Route::get('/clients/dashboard', [ClientController::class, 'dashboard'])
+     ->name('clients.dashboard');

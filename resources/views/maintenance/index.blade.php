@@ -131,6 +131,23 @@
         opacity: 0.9;
     }
 
+    /* Badge pour les types de rendez-vous */
+    .badge-type {
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: capitalize;
+    }
+
+    .badge-diagnostic { background-color: #6f42c1; color: white; }
+    .badge-oil_change { background-color: #fd7e14; color: white; }
+    .badge-electrical { background-color: #20c997; color: white; }
+    .badge-mechanical { background-color: #17a2b8; color: white; }
+    .badge-tires { background-color: #ffc107; color: #212529; }
+    .badge-brakes { background-color: #dc3545; color: white; }
+    .badge-other { background-color: #6c757d; color: white; }
+
     /* Responsive */
     @media (max-width: 992px) {
         .filter-form {
@@ -192,6 +209,20 @@
             </div>
             
             <div class="filter-group">
+                <label class="form-label">Type</label>
+                <select name="appointment_type" class="filter-control">
+                    <option value="">Tous les types</option>
+                    <option value="diagnostic" {{ request('appointment_type') == 'diagnostic' ? 'selected' : '' }}>Diagnostic</option>
+                    <option value="oil_change" {{ request('appointment_type') == 'oil_change' ? 'selected' : '' }}>Vidange</option>
+                    <option value="electrical" {{ request('appointment_type') == 'electrical' ? 'selected' : '' }}>Problème électrique</option>
+                    <option value="mechanical" {{ request('appointment_type') == 'mechanical' ? 'selected' : '' }}>Problème mécanique</option>
+                    <option value="tires" {{ request('appointment_type') == 'tires' ? 'selected' : '' }}>Pneus/Alignement</option>
+                    <option value="brakes" {{ request('appointment_type') == 'brakes' ? 'selected' : '' }}>Freinage</option>
+                    <option value="other" {{ request('appointment_type') == 'other' ? 'selected' : '' }}>Autre</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
                 <label class="form-label">Statut</label>
                 <select name="status" class="filter-control">
                     <option value="">Tous les statuts</option>
@@ -220,6 +251,7 @@
                     <th>Voiture</th>
                     <th>Date</th>
                     <th>Heure</th>
+                    <th>Type</th>
                     <th>Statut</th>
                     <th>Description</th>
                     <th>Actions</th>
@@ -228,10 +260,36 @@
             <tbody>
                 @forelse($maintenances as $maintenance)
                     <tr>
-                        <td>{{ $maintenance->client_name }}</td>
+                        <td>{{ $maintenance->user->name ?? 'Ancien client' }}</td>
                         <td>{{ $maintenance->car->name }}</td>
                         <td>{{ $maintenance->date }}</td>
                         <td>{{ $maintenance->time }}</td>
+                        <td>
+                            <span class="badge badge-{{ $maintenance->appointment_type }} badge-type">
+                                @switch($maintenance->appointment_type)
+                                    @case('diagnostic')
+                                        Diagnostic
+                                        @break
+                                    @case('oil_change')
+                                        Vidange
+                                        @break
+                                    @case('electrical')
+                                        Électrique
+                                        @break
+                                    @case('mechanical')
+                                        Mécanique
+                                        @break
+                                    @case('tires')
+                                        Pneus
+                                        @break
+                                    @case('brakes')
+                                        Freinage
+                                        @break
+                                    @default
+                                        Autre
+                                @endswitch
+                            </span>
+                        </td>
                         <td>
                             <span class="badge bg-{{ $maintenance->status == 'completed' ? 'success' : ($maintenance->status == 'pending' ? 'warning' : ($maintenance->status == 'canceled' ? 'danger' : 'info')) }}">
                                 {{ $statuses[$maintenance->status] ?? $maintenance->status }}
@@ -258,7 +316,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center">Aucun rendez-vous trouvé</td>
+                        <td colspan="8" class="text-center">Aucun rendez-vous trouvé</td>
                     </tr>
                 @endforelse
             </tbody>

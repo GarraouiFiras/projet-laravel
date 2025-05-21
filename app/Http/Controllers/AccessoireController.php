@@ -6,49 +6,62 @@ use Illuminate\Http\Request;
 use App\Models\Accessoire;
 use Illuminate\Support\Facades\Storage;
 
-
 class AccessoireController extends Controller
 {
     // Afficher la liste des accessoires
     public function index(Request $request)
     {
         $query = Accessoire::query();
-    
+
         // Filtre par nom
         if ($request->filled('nom')) {
             $query->where('nom', 'like', '%'.$request->nom.'%');
         }
-    
+
         // Filtre par prix minimum
         if ($request->filled('prix_min')) {
             $query->where('prix', '>=', $request->prix_min);
         }
-    
+
         // Filtre par prix maximum
         if ($request->filled('prix_max')) {
             $query->where('prix', '<=', $request->prix_max);
         }
-    
+
         // Filtre par stock minimum
         if ($request->filled('stock_min')) {
             $query->where('stock', '>=', $request->stock_min);
         }
-    
+
         // Tri des colonnes
         if ($request->has('sort') && $request->has('direction')) {
             $query->orderBy($request->sort, $request->direction);
         } else {
             $query->orderBy('nom'); // Tri par défaut
         }
-    
+
         $accessoires = $query->paginate(10);
-    
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'content' => view('accessoires.partial', compact('accessoires'))->render()
+            ]);
+        }
+
         return view('accessoires.index', compact('accessoires'));
     }
 
     // Afficher le formulaire de création d'un accessoire
-    public function create()
+    public function create(Request $request)
     {
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'content' => view('accessoires.create_partial')->render()
+            ]);
+        }
+
         return view('accessoires.create');
     }
 
@@ -60,17 +73,15 @@ class AccessoireController extends Controller
             'description' => 'nullable|string',
             'prix' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validation pour l'image
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Enregistrer l'image si elle est téléchargée
+        $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('accessoires', 'public');
-        } else {
-            $imagePath = null;
         }
 
-        Accessoire::create([
+        $accessoire = Accessoire::create([
             'nom' => $request->nom,
             'description' => $request->description,
             'prix' => $request->prix,
@@ -78,18 +89,41 @@ class AccessoireController extends Controller
             'image' => $imagePath,
         ]);
 
-        return redirect()->route('accessoires.index')->with('success', 'Accessoire ajouté avec succès.');
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'redirect' => route('accessoires.show', $accessoire->id),
+                'message' => 'Accessoire ajouté avec succès.'
+            ]);
+        }
+
+        return redirect()->route('accessoires.show', $accessoire->id)
+                        ->with('success', 'Accessoire ajouté avec succès.');
     }
 
     // Afficher les détails d'un accessoire
-    public function show(Accessoire $accessoire)
+    public function show(Request $request, Accessoire $accessoire)
     {
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'content' => view('accessoires.show_partial', compact('accessoire'))->render()
+            ]);
+        }
+
         return view('accessoires.show', compact('accessoire'));
     }
 
     // Afficher le formulaire de modification d'un accessoire
-    public function edit(Accessoire $accessoire)
+    public function edit(Request $request, Accessoire $accessoire)
     {
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'content' => view('accessoires.edit_partial', compact('accessoire'))->render()
+            ]);
+        }
+
         return view('accessoires.edit', compact('accessoire'));
     }
 
@@ -101,18 +135,16 @@ class AccessoireController extends Controller
             'description' => 'nullable|string',
             'prix' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validation pour l'image
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Mettre à jour l'image si une nouvelle image est téléchargée
+        $imagePath = $accessoire->image;
         if ($request->hasFile('image')) {
-            // Supprimer l'ancienne image si elle existe
+            // Supprimer l'ancienne image
             if ($accessoire->image) {
                 Storage::disk('public')->delete($accessoire->image);
             }
             $imagePath = $request->file('image')->store('accessoires', 'public');
-        } else {
-            $imagePath = $accessoire->image;
         }
 
         $accessoire->update([
@@ -123,17 +155,35 @@ class AccessoireController extends Controller
             'image' => $imagePath,
         ]);
 
-        return redirect()->route('accessoires.index')->with('success', 'Accessoire mis à jour avec succès.');
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'redirect' => route('accessoires.show', $accessoire->id),
+                'message' => 'Accessoire mis à jour avec succès.'
+            ]);
+        }
+
+        return redirect()->route('accessoires.show', $accessoire->id)
+                        ->with('success', 'Accessoire mis à jour avec succès.');
     }
 
     // Supprimer un accessoire
-    public function destroy(Accessoire $accessoire)
+    public function destroy(Request $request, Accessoire $accessoire)
     {
-        // Supprimer l'image si elle existe
         if ($accessoire->image) {
             Storage::disk('public')->delete($accessoire->image);
         }
         $accessoire->delete();
-        return redirect()->route('accessoires.index')->with('success', 'Accessoire supprimé avec succès.');
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'redirect' => route('accessoires.index'),
+                'message' => 'Accessoire supprimé avec succès.'
+            ]);
+        }
+
+        return redirect()->route('accessoires.index')
+                        ->with('success', 'Accessoire supprimé avec succès.');
     }
 }

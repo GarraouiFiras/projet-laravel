@@ -60,11 +60,17 @@
             <li><a href="#">Nos Magasins</a></li>
             <li><a href="#">Catalogue</a></li>
             <li><a href="#">Services Personnalisés</a></li>
+            <li class="nav-item">
+        <a class="nav-link" href="{{ route('client.dashboard') }}">
+            <i class="fas fa-user me-1"></i> Mon compte
+        </a>
+    </li>
             @auth
       @if(auth()->user()->role === 'admin') <!-- Vérification du rôle admin -->
       <li><a href="{{ route('formulaire') }}">Ajouter une Voiture</a></li> <!-- Bouton Ajouter une Voiture -->
       <li><a href="/users">Users</a></li> <!-- Option Users -->
       <li><a href="/statistiques">Statistiques</a></li> <!-- Statistiques -->
+       
       @endif
     @endauth 
           </ul>
@@ -74,17 +80,30 @@
     </nav>
 
     
-    <a class="btn-getstarted" href="/signup">signUp</a>
-    <a class="btn-getstarted" href="/login">Login</a> <!-- Bouton Login -->
-    @auth
-    <a class="btn-getstarted" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-        Logout
-    </a>
+   @guest
+    <a class="btn-getstarted" href="/signup">S'inscrire</a>
+    <a class="btn-getstarted" href="/login">Connexion</a>
+@endguest
+
+@auth
+    <div class="profile-dropdown">
+          @auth
+    <div class="profile-dropdown">
+        <a href="/dashboard" class="profile-initials">
+            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+        </a>
+    </div>
+    <!-- ... reste du code ... -->
 @endauth
-    @auth
+    </div>
+    
+    <a class="btn-getstarted" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+        Déconnexion
+    </a>
+    
     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
         @csrf
-        <button type="submit" class="btn-getstarted">Logout</button>
+        <button type="submit" class="btn-getstarted">Déconnexion</button>
     </form>
 @endauth
 
