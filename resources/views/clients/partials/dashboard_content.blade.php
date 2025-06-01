@@ -106,9 +106,8 @@
                                             <form action="{{ route('client.rendezvous.destroy', $rdv->id) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger"
-                                                        onclick="return confirm('Supprimer ce rendez-vous ?')">
-                                                    <i class="fas fa-trash-alt"></i>
+                                                <button onclick="deleteRendezVous({{ $rendezvous->id }})" class="btn btn-danger">
+                                                  Supprimer
                                                 </button>
                                             </form>
                                         </td>
@@ -134,4 +133,25 @@ document.querySelectorAll('.load-content').forEach(link => {
         window.dispatchEvent(new CustomEvent('content-load', { detail: { url } }));
     });
 });
+function deleteRendezVous(id) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?')) {
+        $.ajax({
+            url: '/rendezvous/' + id,
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'Accept': 'application/json'
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert(response.message);
+                    window.location.reload(); // ou mettre à jour le DOM
+                }
+            },
+            error: function(xhr) {
+                alert(xhr.responseJSON.message);
+            }
+        });
+    }
+}
 </script>

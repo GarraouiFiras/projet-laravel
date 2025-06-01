@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Models\Commande;
 use App\Models\Maintenance;
+use App\Models\car;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -21,19 +22,10 @@ public function dashboard(Request $request)
         ->latest()
         ->paginate(5);
 
-    // Récupération des rendez-vous avec pagination
-    $carIds = $user->commandes()
-        ->with('commandeItems')
-        ->get()
-        ->flatMap(function ($commande) {
-            return $commande->commandeItems
-                ->where('type_produit', 'car')
-                ->pluck('produit_id');
-        });
-
-    $rendezvous = Maintenance::whereIn('car_id', $carIds)
-        ->latest()
-        ->paginate(5);
+    // Récupération des rendez-vous de l'utilisateur
+        $rendezvous = Maintenance::where('user_id', $user->id)
+            ->latest()
+            ->paginate(5);
 
     // Définition des couleurs de statut
     $statutColors = [
@@ -53,12 +45,13 @@ public function dashboard(Request $request)
                 'commandes' => $commandes,
                 'rendezvous' => $rendezvous,
                 'statutColors' => $statutColors,
-                'user' => $user
+                'user' => $user,
+                'is_ajax' => true
             ])->render()
         ]);
     }
 
-    return view('dashboard', [
+    return view('clients.dashboard', [
         'commandes' => $commandes,
         'rendezvous' => $rendezvous,
         'statutColors' => $statutColors,
@@ -167,7 +160,7 @@ public function updateCommande(Request $request, Commande $commande)
     }
 }
 
-  /*  public function updateRendezVous(Request $request, Maintenance $rendezvous)
+    public function updateRendezVous(Request $request, Maintenance $rendezvous)
     {
         // Vérifier que le rendez-vous appartient à une voiture de l'utilisateur
         $userCarIds = $this->getUserCarIds();
@@ -189,44 +182,55 @@ public function updateCommande(Request $request, Commande $commande)
         $rendezvous->update($validated);
 
         return back()->with('success', 'Rendez-vous mis à jour');
-    }*/
+    }
 
-  public function destroyRendezVous(Request $request, Maintenance $rendezvous)
+public function destroyRendezVous(Request $request, Maintenance $maintenance)
 {
-    
-     
-    // Seuls les rendez-vous en attente (pending) peuvent être supprimés
-    if ($rendezvous->statut !== 'pending') {
+    // 1. Vérification que le rendez-vous appartient bien au client
+    if ($maintenance->user_id !== Auth::id()) {
         if ($request->ajax()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Seuls les rendez-vous en attente peuvent être supprimés'
+                'message' => 'Action non autorisée'
             ], 403);
         }
-        return back()->with('error', 'Seuls les rendez-vous en attente peuvent être supprimés');
+        return back()->with('error', 'Action non autorisée');
     }
 
+    // 2. Vérification que le statut est bien 'pending' (uniquement pour les clients)
+    if ($maintenance->status !== 'pending') {
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Vous ne pouvez annuler que les rendez-vous en attente'
+            ], 403);
+        }
+        return back()->with('error', 'Vous ne pouvez annuler que les rendez-vous en attente');
+    }
+
+    // 3. Suppression du rendez-vous
     try {
-        $rendezvous->delete();
+        $maintenance->delete();
 
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Rendez-vous supprimé avec succès'
+                'message' => 'Rendez-vous annulé avec succès',
+                'redirect' => route('clients.dashboard')
             ]);
         }
 
-        return back()->with('success', 'Rendez-vous supprimé avec succès');
+        return redirect()->route('clients.dashboard')
+               ->with('success', 'Rendez-vous annulé avec succès');
 
     } catch (\Exception $e) {
         if ($request->ajax()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur lors de la suppression: ' . $e->getMessage()
+                'message' => 'Erreur lors de l\'annulation: ' . $e->getMessage()
             ], 500);
         }
-
-        return back()->with('error', 'Erreur lors de la suppression: ' . $e->getMessage());
+        return back()->with('error', 'Erreur lors de l\'annulation: ' . $e->getMessage());
     }
 }
     private function getStatusColor($status)

@@ -93,7 +93,8 @@ class AccessoireController extends Controller
             return response()->json([
                 'success' => true,
                 'redirect' => route('accessoires.show', $accessoire->id),
-                'message' => 'Accessoire ajouté avec succès.'
+                'message' => 'Accessoire ajouté avec succès.',
+                'is_ajax' => true
             ]);
         }
 

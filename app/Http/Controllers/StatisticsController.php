@@ -6,16 +6,16 @@ use Illuminate\Http\Request;
 use App\Models\car;
 use App\Models\Commande;
 use App\Models\OrderItem;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use DateTime;
 
 class StatisticsController extends Controller
 {
     public function statistics()
-    {
-        return view('statistiques');
-    }
-
+{
+    return view('statistiques');
+}
     public function dashboardStats()
     {
         $stats = [
@@ -197,4 +197,39 @@ class StatisticsController extends Controller
                 ];
             });
     }
+     public function getDashboardStats()
+    {
+       return [
+        'total_cars' => $this->getTotalCars(),
+        'car_growth' => $this->calculateCarGrowth(),
+        'total_clients' => $this->getTotalClients(),
+        'client_growth' => $this->calculateClientGrowth(),
+        'total_orders' => $this->getTotalOrders(),
+        'order_growth' => $this->calculateOrderGrowth(),
+        'total_revenue' => $this->getTotalRevenue(),
+        'revenue_growth' => $this->calculateRevenueGrowth()
+    ];
+    }
+
+private function getTotalCars()
+{
+    return Car::count();
+}
+
+private function getTotalClients()
+{
+    return user::where('role', 'user')->count(); 
+}
+
+private function getTotalOrders()
+{
+    return Commande::count();
+}
+
+private function getTotalRevenue()
+{
+    return Commande::where('statut', 'livree')->sum('total') ?? 0;
+}
+
+// Les méthodes de croissance existantes peuvent être gardées telles quelles
 }

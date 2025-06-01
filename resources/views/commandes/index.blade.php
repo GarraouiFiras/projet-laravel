@@ -186,6 +186,61 @@
         .action-buttons {
             flex-wrap: wrap;
         }
+     .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    padding-left: 0;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.page-item {
+    margin: 0;
+}
+
+.page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #333;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+}
+
+.page-link:hover {
+    background-color: rgba(13, 110, 253, 0.9);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.page-item.active .page-link {
+    background-color: rgba(13, 110, 253, 0.9);
+    color: white;
+    border-color: transparent;
+}
+
+.page-item.disabled .page-link {
+    background-color: rgba(255, 255, 255, 0.4);
+    color: #aaa;
+    pointer-events: none;
+}
+
+/* Styles spécifiques pour les flèches */
+.page-link i {
+    font-size: 0.8rem;
+}
 
     }
 </style>
@@ -270,7 +325,7 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                       <!-- <th>ID</th> -->
                         <th>Nom du client</th>
                         @if(Auth::check() && (Auth::user()->role === 'admin' || Auth::user()->role === 'vendeur'))
                             <th>Client</th>
@@ -286,7 +341,7 @@
                 <tbody>
                     @foreach($commandes as $commande)
                         <tr>
-                            <td>{{ $commande->id }}</td>
+                           <!-- <td>{{ $commande->id }}</td> -->
                             <td>
                                 <strong>{{ $commande->nom_client }}</strong>
                             </td>
@@ -366,14 +421,27 @@
         </div>
 
         <!-- Pagination -->
-        <div class="d-flex justify-content-between mt-4">
-            <div class="text-muted">
-                Affichage de {{ $commandes->firstItem() }} à {{ $commandes->lastItem() }} sur {{ $commandes->total() }} commandes
-            </div>
-            <div>
-                {{ $commandes->appends(request()->query())->links() }}
-            </div>
-        </div>
+<div class="d-flex justify-content-center mt-4">
+    @if($commandes->hasPages())
+    <nav aria-label="Page navigation">
+        <ul class="pagination mb-0">
+            {{-- Previous Page --}}
+            <li class="page-item {{ $commandes->onFirstPage() ? 'disabled' : '' }}">
+                <a class="page-link" href="{{ $commandes->previousPageUrl() }}" aria-label="Previous">
+                    <span>Previous</span>
+                </a>
+            </li>
+            
+            {{-- Next Page --}}
+            <li class="page-item {{ !$commandes->hasMorePages() ? 'disabled' : '' }}">
+                <a class="page-link" href="{{ $commandes->nextPageUrl() }}" aria-label="Next">
+                    <span>Next</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    @endif
+</div>
     @endif
 </div>
 

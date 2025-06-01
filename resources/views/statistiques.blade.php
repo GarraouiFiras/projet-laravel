@@ -100,6 +100,11 @@
         padding: 5px 10px;
     }
     
+    .tnd-price {
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    
     @media (max-width: 992px) {
         .content {
             margin-left: 0;
@@ -119,7 +124,6 @@
                 <span class="me-3 d-none d-md-inline text-muted">
                     <i class="fas fa-user-circle me-1"></i>{{ Auth::user()->name }}
                 </span>
-                
             </div>
         </div>
     </nav>
@@ -251,6 +255,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error('Aucune donnée reçue');
             }
 
+            // Formatage des montants en TND
+            const formatTND = (amount) => {
+                return new Intl.NumberFormat('fr-FR', {
+                    style: 'decimal',
+                    maximumFractionDigits: 0
+                }).format(amount) + ' TND';
+            };
+
             // 1. Graphique des ventes mensuelles
             const monthlySalesChart = new Chart(
                 document.getElementById('monthlySalesChart'), 
@@ -259,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: {
                         labels: data.monthly_sales.labels,
                         datasets: [{
-                            label: 'Ventes (€)',
+                            label: 'Ventes (TND)',
                             data: data.monthly_sales.data,
                             backgroundColor: 'rgba(52, 152, 219, 0.2)',
                             borderColor: 'rgba(52, 152, 219, 1)',
@@ -290,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 callbacks: {
                                     label: function(context) {
                                         return context.dataset.label + ': ' + 
-                                               context.raw.toLocaleString('fr-FR') + ' €';
+                                               formatTND(context.raw);
                                     }
                                 }
                             }
@@ -300,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 beginAtZero: true,
                                 ticks: {
                                     callback: function(value) {
-                                        return value.toLocaleString('fr-FR') + ' €';
+                                        return formatTND(value);
                                     }
                                 },
                                 grid: {
@@ -353,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     label: function(context) {
                                         const total = context.dataset.data.reduce((a, b) => a + b, 0);
                                         const percentage = Math.round((context.raw / total) * 100);
-                                        return `${context.label}: ${context.raw} (${percentage}%)`;
+                                        return `${context.label}: ${formatTND(context.raw)} (${percentage}%)`;
                                     }
                                 }
                             }
@@ -438,27 +450,50 @@ document.addEventListener('DOMContentLoaded', function() {
             );
 
             // 5. Remplissage du tableau des top clients
-            const topClientsTable = document.getElementById('topClientsTable').getElementsByTagName('tbody')[0];
-            data.top_clients.forEach((client, index) => {
-                const row = topClientsTable.insertRow();
-                
-                const cellIndex = row.insertCell(0);
-                const cellClient = row.insertCell(1);
-                const cellOrders = row.insertCell(2);
-                const cellTotal = row.insertCell(3);
-                const cellLastOrder = row.insertCell(4);
-                
-                cellIndex.innerHTML = `<span class="badge bg-primary">${index + 1}</span>`;
-                cellClient.innerHTML = `<strong>${client.client}</strong>`;
-                cellOrders.innerHTML = `<span class="badge bg-info">${client.commandes}</span>`;
-                cellTotal.innerHTML = `<span class="text-success fw-bold">${client.total_depense.toLocaleString('fr-FR')} €</span>`;
-                cellLastOrder.innerHTML = new Date(client.last_order).toLocaleDateString('fr-FR');
-            });
+           // 5. Remplissage du tableau des top clients avec tri
+const topClientsTable = document.getElementById('topClientsTable').getElementsByTagName('tbody')[0];
+
+// Vider le tableau au cas où
+topClientsTable.innerHTML = '';
+
+// Vérifier que data.top_clients existe et est un tableau
+if (Array.isArray(data.top_clients)) {
+    // Trier par total dépensé (descendant)
+    data.top_clients.sort((a, b) => {
+        // Gestion des valeurs manquantes
+        const totalA = a.total_depense || 0;
+        const totalB = b.total_depense || 0;
+        return totalB - totalA;
+    });
+
+    // Remplir le tableau
+    data.top_clients.forEach((client, index) => {
+        const row = topClientsTable.insertRow();
+        
+        const cellIndex = row.insertCell(0);
+        const cellClient = row.insertCell(1);
+        const cellOrders = row.insertCell(2);
+        const cellTotal = row.insertCell(3);
+        const cellLastOrder = row.insertCell(4);
+        
+        cellIndex.innerHTML = `<span class="badge bg-primary">${index + 1}</span>`;
+        cellClient.innerHTML = `<strong>${client.client || 'N/A'}</strong>`;
+        cellOrders.innerHTML = `<span class="badge bg-info">${client.commandes || 0}</span>`;
+        cellTotal.innerHTML = `<span class="tnd-price">${formatTND(client.total_depense || 0)}</span>`;
+        cellLastOrder.innerHTML = client.last_order 
+            ? new Date(client.last_order).toLocaleDateString('fr-FR') 
+            : 'N/A';
+    });
+} else {
+    console.error('data.top_clients n\'est pas un tableau', data.top_clients);
+}
         })
         .catch(error => {
             console.error("Erreur lors du chargement des données:", error);
             alert("Une erreur est survenue lors du chargement des données statistiques.");
         });
 });
+
+
 </script>
 @endsection

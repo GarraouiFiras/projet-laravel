@@ -185,148 +185,75 @@
         </div>
     @endif
 
-    <!-- Filtres - Tous en ligne -->
+    <!-- Filtres -->
     <div class="filter-container">
-        <form method="GET" action="{{ route('maintenance.index') }}" class="filter-form">
-            <div class="filter-group">
-                <label class="form-label">Client</label>
-                <input type="text" name="client" class="filter-control" placeholder="Nom du client" value="{{ request('client') }}">
-            </div>
-            
-            <div class="filter-group">
-                <label class="form-label">Voiture</label>
-                <select name="car_id" class="filter-control">
-                    <option value="">Toutes les voitures</option>
-                    @foreach($cars as $car)
-                        <option value="{{ $car->id }}" {{ request('car_id') == $car->id ? 'selected' : '' }}>{{ $car->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label class="form-label">Date</label>
-                <input type="date" name="date" class="filter-control" value="{{ request('date') }}">
-            </div>
-            
-            <div class="filter-group">
-                <label class="form-label">Type</label>
-                <select name="appointment_type" class="filter-control">
-                    <option value="">Tous les types</option>
-                    <option value="diagnostic" {{ request('appointment_type') == 'diagnostic' ? 'selected' : '' }}>Diagnostic</option>
-                    <option value="oil_change" {{ request('appointment_type') == 'oil_change' ? 'selected' : '' }}>Vidange</option>
-                    <option value="electrical" {{ request('appointment_type') == 'electrical' ? 'selected' : '' }}>Problème électrique</option>
-                    <option value="mechanical" {{ request('appointment_type') == 'mechanical' ? 'selected' : '' }}>Problème mécanique</option>
-                    <option value="tires" {{ request('appointment_type') == 'tires' ? 'selected' : '' }}>Pneus/Alignement</option>
-                    <option value="brakes" {{ request('appointment_type') == 'brakes' ? 'selected' : '' }}>Freinage</option>
-                    <option value="other" {{ request('appointment_type') == 'other' ? 'selected' : '' }}>Autre</option>
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label class="form-label">Statut</label>
-                <select name="status" class="filter-control">
-                    <option value="">Tous les statuts</option>
-                    @foreach($statuses as $key => $value)
-                        <option value="{{ $key }}" {{ request('status') == $key ? 'selected' : '' }}>{{ $value }}</option>
-                    @endforeach
-                </select>
-            </div>
-            
-            <div class="filter-buttons">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-filter"></i> Filtrer
-                </button>
-                <a href="{{ route('maintenance.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-sync-alt"></i> Réinitialiser
-                </a>
-            </div>
+        <form method="GET" action="{{ route('maintenance.index') }}" class="filter-form" id="filter-form">
+            <!-- [Vos champs de filtre existants] -->
         </form>
     </div>
 
-    <div class="table-container">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Client</th>
-                    <th>Voiture</th>
-                    <th>Date</th>
-                    <th>Heure</th>
-                    <th>Type</th>
-                    <th>Statut</th>
-                    <th>Description</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($maintenances as $maintenance)
-                    <tr>
-                        <td>{{ $maintenance->user->name ?? 'Ancien client' }}</td>
-                        <td>{{ $maintenance->car->name }}</td>
-                        <td>{{ $maintenance->date }}</td>
-                        <td>{{ $maintenance->time }}</td>
-                        <td>
-                            <span class="badge badge-{{ $maintenance->appointment_type }} badge-type">
-                                @switch($maintenance->appointment_type)
-                                    @case('diagnostic')
-                                        Diagnostic
-                                        @break
-                                    @case('oil_change')
-                                        Vidange
-                                        @break
-                                    @case('electrical')
-                                        Électrique
-                                        @break
-                                    @case('mechanical')
-                                        Mécanique
-                                        @break
-                                    @case('tires')
-                                        Pneus
-                                        @break
-                                    @case('brakes')
-                                        Freinage
-                                        @break
-                                    @default
-                                        Autre
-                                @endswitch
-                            </span>
-                        </td>
-                        <td>
-                            <span class="badge bg-{{ $maintenance->status == 'completed' ? 'success' : ($maintenance->status == 'pending' ? 'warning' : ($maintenance->status == 'canceled' ? 'danger' : 'info')) }}">
-                                {{ $statuses[$maintenance->status] ?? $maintenance->status }}
-                            </span>
-                        </td>
-                        <td>{{ $maintenance->description ?? '<span class="text-muted">Aucune description</span>' }}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <a href="{{ route('maintenance.show', $maintenance->id) }}" class="btn btn-info btn-sm" title="Voir">
-                                    <i class="fas fa-eye"></i> 
-                                </a>
-                                <a href="{{ route('maintenance.edit', $maintenance->id) }}" class="btn btn-warning btn-sm" title="Modifier">
-                                    <i class="fas fa-edit"></i> 
-                                </a>
-                                <form action="{{ route('maintenance.destroy', $maintenance->id) }}" method="POST" style="display: inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" title="Supprimer" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?')">
-                                        <i class="fas fa-trash-alt"></i> 
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="8" class="text-center">Aucun rendez-vous trouvé</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-        
-        @if($maintenances->hasPages())
-            <div class="d-flex justify-content-center mt-4">
-                {{ $maintenances->appends(request()->query())->links() }}
-            </div>
-        @endif
+    <!-- Conteneur du tableau (seulement cette partie) -->
+    <div class="table-container" id="maintenance-content">
+        @include('maintenance.partial', [
+            'maintenances' => $maintenances, 
+            'cars' => $cars, 
+            'statuses' => $statuses
+        ])
     </div>
 </div>
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion du chargement AJAX
+    window.addEventListener('content-load', function(e) {
+        fetch(e.detail.url, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('maintenance-content').innerHTML = data.content;
+                // Réappliquer le style de fond si nécessaire
+                document.body.style.backgroundImage = "url('/assets/img/art.jpg')";
+                document.body.style.backgroundSize = "cover";
+                document.body.style.backgroundAttachment = "fixed";
+            }
+        });
+    });
+
+    // Gestion des filtres
+    document.getElementById('filter-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const url = new URL(this.action);
+        const params = new URLSearchParams(formData);
+        
+        fetch(`${url.pathname}?${params}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('maintenance-content').innerHTML = data.content;
+                history.pushState({}, '', `${url.pathname}?${params}`);
+            }
+        });
+    });
+
+    // Réinitialiser les événements après chargement AJAX
+    function initDynamicContentEvents() {
+        document.querySelectorAll('.load-content').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.dispatchEvent(new CustomEvent('content-load', { 
+                    detail: { url: this.getAttribute('data-url') }
+                }));
+            });
+        });
+    }
+    initDynamicContentEvents();
+});
+</script>
+@endsection
 @endsection

@@ -17,11 +17,11 @@
         background-color: rgba(255, 255, 255, 0.15);
         backdrop-filter: blur(8px);
         border-radius: 15px;
-        padding: 30px;
-        margin: 30px auto;
-        width: 95%;
-        max-width: 800px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        padding: 15px;
+        margin: 20px auto;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
         border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
@@ -29,57 +29,59 @@
         background-color: rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(5px);
         border: none;
-        border-radius: 10px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    }
-
-    .card-body {
-        color: #000;
+        border-radius: 8px;
+        padding: 15px;
     }
 
     h1 {
         color: #000;
         text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
-        margin-bottom: 25px;
+        margin-bottom: 15px;
+        font-size: 1.5rem;
     }
 
     .card-title {
-        font-size: 1.8rem;
+        font-size: 1.3rem;
         font-weight: 600;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         color: #000;
     }
 
     .card-text {
-        font-size: 1.1rem;
-        margin-bottom: 1rem;
+        font-size: 1rem;
+        margin-bottom: 0.8rem;
     }
 
     .card-text strong {
         font-weight: 600;
     }
 
+    .price-highlight {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
     img {
         max-width: 100%;
         height: auto;
-        border-radius: 8px;
-        margin: 20px 0;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        max-height: 200px;
+        border-radius: 6px;
+        margin: 10px 0;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         border: 1px solid rgba(0, 0, 0, 0.1);
     }
 
     .btn-secondary {
         background-color: rgba(108, 117, 125, 0.8);
         border: none;
-        padding: 8px 20px;
-        margin-top: 20px;
-        transition: all 0.3s ease;
+        padding: 6px 15px;
+        margin-top: 15px;
+        font-size: 0.9rem;
     }
 
-    .btn-secondary:hover {
-        background-color: rgba(84, 91, 98, 0.9);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    .text-muted {
+        color: #6c757d;
+        font-size: 0.9rem;
     }
 </style>
 
@@ -89,13 +91,15 @@
         <div class="card-body">
             <h5 class="card-title">{{ $accessoire->nom }}</h5>
             <p class="card-text"><strong>Description :</strong> {{ $accessoire->description }}</p>
-            <p class="card-text"><strong>Prix :</strong> {{ $accessoire->prix }} €</p>
+            <p class="card-text"><strong>Prix :</strong> <span class="price-highlight">{{ number_format($accessoire->prix, 0, '', ' ') }} TND</span></p>
             <p class="card-text"><strong>Stock :</strong> {{ $accessoire->stock }}</p>
+            
             @if($accessoire->image)
-                <img src="{{ asset('storage/' . $accessoire->image) }}" alt="{{ $accessoire->nom }}" class="img-fluid" style="max-height: 300px;">
+                <img src="{{ asset('storage/' . $accessoire->image) }}" alt="{{ $accessoire->nom }}" class="img-fluid">
             @else
                 <p class="text-muted">Pas d'image disponible</p>
             @endif
+            
             <div class="text-center">
                 <a href="{{ route('accessoires.index') }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Retour à la liste

@@ -47,10 +47,14 @@ class MaintenanceController extends Controller
 
     // Retour différent pour les requêtes AJAX
     if ($request->ajax()) {
-        return view('maintenance.partial', [
-            'maintenances' => $maintenances,
-            'cars' => $cars,
-            'statuses' => $statuses
+        return response()->json([
+            'success' => true,
+            'content' => view('maintenance.partial', [
+                'maintenances' => $maintenances,
+                'cars' => $cars,
+                'statuses' => $statuses,
+                'is_ajax' => true
+            ])->render()
         ]);
     }
 
@@ -66,6 +70,15 @@ class MaintenanceController extends Controller
     {
         $cars = Car::all(); // Récupérer toutes les voitures
         return view('maintenance.create', compact('cars'));
+        if ($request->ajax())
+    {
+    return response()->json([
+        'html' => view('maintenance.create_partial', [
+            'cars' => $cars,
+            'appointmentTypes' => $this->getAppointmentTypes()
+        ])->render()
+    ]);
+    }
     }
 
     // Enregistrer un nouveau rendez-vous
@@ -107,10 +120,28 @@ private function getAppointmentTypes()
 }
 
     // Afficher les détails d'un rendez-vous
-    public function show(Maintenance $maintenance)
-    {
-        return view('maintenance.show', compact('maintenance'));
+    public function show(Request $request, Maintenance $maintenance)
+{
+    $maintenance->load(['car', 'user']);
+    $statuses = [
+        'pending' => 'En attente',
+        'confirmed' => 'Confirmé',
+        'completed' => 'Terminé',
+        'canceled' => 'Annulé'
+    ];
+
+    if ($request->ajax()) {
+        return response()->json([
+            'success' => true,
+            'content' => view('maintenance.show_partial', [
+                'maintenance' => $maintenance,
+                'statuses' => $statuses
+            ])->render()
+        ]);
     }
+
+    return view('maintenance.show', compact('maintenance', 'statuses'));
+}
 
     // Supprimer un rendez-vous
     public function destroy(Maintenance $maintenance)
@@ -136,14 +167,29 @@ private function getAppointmentTypes()
     }
 
 
-   public function edit(Maintenance $maintenance)
-    {
-        return view('maintenance.edit', [
-            'maintenance' => $maintenance,
-            'statuses' => ['pending' => 'En attente', 'confirmed' => 'Confirmé', 'completed' => 'Terminé', 'canceled' => 'Annulé'],
-            'appointmentTypes' => $this->getAppointmentTypes()
+   public function edit(Request $request, Maintenance $maintenance)
+{
+    $statuses = [
+        'pending' => 'En attente',
+        'confirmed' => 'Confirmé',
+        'completed' => 'Terminé',
+        'canceled' => 'Annulé'
+    ];
+    $appointmentTypes = $this->getAppointmentTypes();
+
+    if ($request->ajax()) {
+        return response()->json([
+            'success' => true,
+            'content' => view('maintenance.edit_partial', [
+                'maintenance' => $maintenance,
+                'statuses' => $statuses,
+                'appointmentTypes' => $appointmentTypes
+            ])->render()
         ]);
     }
+
+    return view('maintenance.edit', compact('maintenance', 'statuses', 'appointmentTypes'));
+}
 
     public function updateStatus(Request $request, Maintenance $maintenance)
     {

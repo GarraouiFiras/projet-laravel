@@ -241,71 +241,131 @@
     margin-bottom: 5px;
 }
     }
+    
   </style>
 </head>
 <body>
-  <!-- Sidebar -->
-    <div class="sidebar bg-dark text-white" style="width: 280px; position: fixed; height: 100vh;">
-        <div class="logo-container text-center p-3 border-bottom">
-            <img src="{{ asset('assets/img/logoo.png') }}" alt="Logo GF" style="width: 180px;">
-        </div>
-        
-        <nav class="nav flex-column p-3">
-            @auth
-                <!-- Liens communs à tous les utilisateurs -->
-                <a href="{{ url('/') }}" class="nav-link text-white py-3">
-                    <i class="fas fa-home me-2"></i> Accueil
-                </a>
-                
-                <!-- Liens spécifiques à l'admin -->
-                @if(auth()->user()->role === 'admin')
-                    <a href="/statistiques" class="nav-link text-white py-3 load-content" data-url="{{ route('statistics') }}">
-                        <i class="fas fa-tachometer-alt me-2"></i> Tableau de bord
-                    </a>
-                    <a href="/commandes" class="nav-link text-white py-3 load-content" data-url="{{ route('commandes.index') }}">
-                        <i class="fas fa-shopping-cart me-2"></i> Commandes
-                    </a>
-                @endif
-
-                   <a href="{{ route('clients.dashboard') }}" 
-   class="nav-link text-white py-3 load-content" 
-   data-url="{{ route('clients.dashboard') }}"
-   onclick="event.preventDefault(); loadClientContent(this.getAttribute('data-url'));">
-   <i class="fas fa-user me-2"></i> Mon Compte
-</a>
-                
-                <!-- Liens pour le gestionnaire d'accessoires -->
-                @if(auth()->user()->role === 'gestionnaire' || auth()->user()->role === 'admin')
-                    <a href="#" class="nav-link text-white py-3 load-content" data-url="{{ route('accessoires.index') }}">
-                        <i class="fas fa-tools me-2"></i> Accessoires
-                    </a>
-                @endif
-                
-                <!-- Liens pour les vendeurs -->
-                @auth
-        @if(auth()->user()->role === 'admin' || auth()->user()->role === 'vendeur')
-        <a href="#" class="nav-link load-content" data-url="{{ route('commandes.index') }}">
-            <i class="fas fa-shopping-cart me-2"></i> Commandes
-        </a>
-        @endif
-        <!-- ... autres liens ... -->
-    @endauth
-                
-                <!-- Liens pour les techniciens -->
-                @if(auth()->user()->role === 'technicien' || auth()->user()->role === 'admin')
-                    <a href="#" class="nav-link text-white py-3 load-content" data-url="{{ route('maintenance.index') }}">
-                        <i class="fas fa-calendar-check me-2"></i> Rendez-vous
-                    </a>
-                @endif
-                
-                <!-- Déconnexion -->
-                <a href="{{ route('logout') }}" class="nav-link text-white py-3 mt-auto"
-                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <i class="fas fa-sign-out-alt me-2"></i> Déconnexion
-                </a>
-            @endauth
-        </nav>
+ <!-- Sidebar -->
+<div class="sidebar bg-dark text-white" style="width: 280px; position: fixed; height: 100vh;">
+    <div class="logo-container text-center p-3 border-bottom">
+        <img src="{{ asset('assets/img/logoo.png') }}" alt="Logo GF" style="width: 180px;">
     </div>
+    
+    <nav class="nav flex-column p-3">
+        @auth
+            <!-- Liens communs à tous les utilisateurs -->
+            <a href="{{ url('/') }}" class="nav-link text-white py-3">
+                <i class="fas fa-home me-2"></i> Accueil
+            </a>
+            
+            <!-- Section Admin -->
+            @if(auth()->user()->role === 'admin')
+                <!-- Tableau de bord -->
+                <a href="#" class="nav-link text-white py-3"
+   onclick="event.preventDefault(); 
+            fetch('{{ route('statistics') }}')
+              .then(response => response.text())
+              .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const content = doc.querySelector('.content').innerHTML;
+                document.getElementById('dynamic-content').innerHTML = content;
+                initializeCharts();
+              });">
+    <i class="fas fa-tachometer-alt me-2"></i> Statistiques
+</a>
+
+
+
+                
+                
+                <!-- Bouton Ajouter une Voiture -->
+                <a href="#" class="nav-link text-white py-3"
+                   onclick="event.preventDefault(); 
+                            fetch('{{ route('formulaire') }}')
+                              .then(response => response.text())
+                              .then(html => {
+                                document.getElementById('dynamic-content').innerHTML = html;
+                              });">
+                    <i class="fas fa-car me-2"></i> Ajouter une Voiture
+                </a>
+                
+                <!-- Bouton Gestion Utilisateurs -->
+                <a href="#" class="nav-link text-white py-3"
+                   onclick="event.preventDefault(); 
+                            fetch('/users')
+                              .then(response => response.text())
+                              .then(html => {
+                                document.getElementById('dynamic-content').innerHTML = html;
+                              });">
+                    <i class="fas fa-users me-2"></i> Gestion Utilisateurs
+                </a>
+                
+                <!-- Bouton Accessoires -->
+                <a href="#" class="nav-link text-white py-3 load-content" data-url="{{ route('accessoires.index') }}">
+                    <i class="fas fa-tools me-2"></i> Accessoires
+                </a>
+                
+                
+                <a href="#" class="nav-link text-white py-3 load-content" data-url="{{ route('commandes.index') }}">
+                    <i class="fas fa-shopping-cart me-2"></i> Commandes
+                </a>
+            @endif
+            
+            <!-- Liens pour les clients -->
+            @if(auth()->user()->role === 'user')
+                <a href="{{ route('clients.dashboard') }}" 
+                   class="nav-link text-white py-3 load-content" 
+                   data-url="{{ route('clients.dashboard') }}"
+                   onclick="event.preventDefault(); loadClientContent(this.getAttribute('data-url'));">
+                    <i class="fas fa-user me-2"></i> Mon Compte
+                </a>
+                <div class="client-actions">
+                    <a href="#" class="client-btn btn-commande"
+                       onclick="event.preventDefault(); 
+                                fetch('{{ route('commandes.create') }}')
+                                  .then(response => response.text())
+                                  .then(html => {
+                                    document.getElementById('dynamic-content').innerHTML = html;
+                                  });">
+                        <i class="fas fa-plus-circle"></i> Nouvelle Commande
+                    </a>
+                    <a href="#" class="client-btn btn-rdv"
+                       onclick="event.preventDefault(); 
+                                fetch('{{ route('maintenance.create') }}')
+                                  .then(response => response.text())
+                                  .then(html => {
+                                    document.getElementById('dynamic-content').innerHTML = html;
+                                  });">
+                        <i class="fas fa-calendar-plus"></i> Nouveau Rendez-vous
+                    </a>
+                </div>
+            @endif
+            
+            <!-- Liens pour les vendeurs (sans le doublon admin) -->
+            @if(auth()->user()->role === 'vendeur' && auth()->user()->role !== 'admin')
+                <a href="#" class="nav-link text-white py-3 load-content" data-url="{{ route('commandes.index') }}">
+                    <i class="fas fa-shopping-cart me-2"></i> Commandes
+                </a>
+            @endif
+            
+            <!-- Liens pour les techniciens -->
+            @if(auth()->user()->role === 'technicien' || auth()->user()->role === 'admin')
+                <a href="#" class="nav-link text-white py-3 load-content" 
+                   data-url="{{ route('maintenance.index') }}"
+                   onclick="loadMaintenanceContent('{{ route('maintenance.index') }}')">
+                    <i class="fas fa-calendar-check me-2"></i> Rendez-vous
+                </a>
+            @endif
+            
+            <!-- Déconnexion -->
+            <a href="{{ route('logout') }}" class="nav-link text-white py-3 mt-auto"
+               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="fas fa-sign-out-alt me-2"></i> Déconnexion
+            </a>
+        @endauth
+    </nav>
+</div>
 
 
   <!-- Content -->
@@ -482,64 +542,70 @@
         </div>
 
         @if(auth()->user()->role === 'admin' && isset($stats))
-        <!-- Stats Cards -->
-        <div class="row">
-            <!-- Card 1 - Véhicules -->
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card stat-card">
-                    <i class="fas fa-car"></i>
-                    <h5>Véhicules</h5>
-                    <p class="text-primary">{{ $stats['total_cars'] }}</p>
-                    <div class="progress mt-3" style="height: 6px;">
-                        <div class="progress-bar bg-primary" role="progressbar" 
-                             style="width: {{ $stats['car_growth'] }}%;"></div>
-                    </div>
-                    <small class="text-muted">{{ $stats['car_growth'] }}% ce mois</small>
-                </div>
+        @php
+            $statsController = app(\App\Http\Controllers\StatisticsController::class);
+            $stats = $statsController->getDashboardStats();
+        @endphp
+       <!-- Cards -->
+<div class="row">
+    <!-- Card Véhicules -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card stat-card">
+            <i class="fas fa-car"></i>
+            <h5>Véhicules</h5>
+            <p class="text-primary">{{ $stats['total_cars'] }}</p>
+            <div class="progress mt-3" style="height: 6px;">
+                <div class="progress-bar bg-primary" role="progressbar" 
+                     style="width: {{ $stats['car_growth'] }}%;"></div>
             </div>
-            
-            <!-- Card 2 - Clients -->
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card stat-card">
-                    <i class="fas fa-users"></i>
-                    <h5>Clients</h5>
-                    <p class="text-success">{{ $stats['total_clients'] }}</p>
-                    <div class="progress mt-3" style="height: 6px;">
-                        <div class="progress-bar bg-success" role="progressbar" 
-                             style="width: {{ $stats['client_growth'] }}%;"></div>
-                    </div>
-                    <small class="text-muted">{{ $stats['client_growth'] }}% ce mois</small>
-                </div>
-            </div>
-            
-            <!-- Card 3 - Commandes -->
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card stat-card">
-                    <i class="fas fa-shopping-cart"></i>
-                    <h5>Commandes</h5>
-                    <p class="text-warning">{{ $stats['total_orders'] }}</p>
-                    <div class="progress mt-3" style="height: 6px;">
-                        <div class="progress-bar bg-warning" role="progressbar" 
-                             style="width: {{ $stats['order_growth'] }}%;"></div>
-                    </div>
-                    <small class="text-muted">{{ $stats['order_growth'] }}% ce mois</small>
-                </div>
-            </div>
-            
-            <!-- Card 4 - Revenus -->
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card stat-card">
-                    <i class="fas fa-chart-line"></i>
-                    <h5>Revenus</h5>
-                    <p class="text-danger">{{ number_format($stats['total_revenue'], 0, ',', ' ') }} €</p>
-                    <div class="progress mt-3" style="height: 6px;">
-                        <div class="progress-bar bg-danger" role="progressbar" 
-                             style="width: {{ $stats['revenue_growth'] }}%;"></div>
-                    </div>
-                    <small class="text-muted">{{ $stats['revenue_growth'] }}% ce mois</small>
-                </div>
-            </div>
+            <small class="text-muted">{{ $stats['car_growth'] }}% ce mois</small>
         </div>
+    </div>
+    
+    <!-- Card Clients -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card stat-card">
+            <i class="fas fa-users"></i>
+            <h5>Clients</h5>
+            <p class="text-success">{{ $stats['total_clients'] }}</p>
+            <div class="progress mt-3" style="height: 6px;">
+                <div class="progress-bar bg-success" role="progressbar" 
+                     style="width: {{ $stats['client_growth'] }}%;"></div>
+            </div>
+            <small class="text-muted">{{ $stats['client_growth'] }}% ce mois</small>
+        </div>
+    </div>
+    
+    <!-- Card Commandes -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card stat-card">
+            <i class="fas fa-shopping-cart"></i>
+            <h5>Commandes</h5>
+            <p class="text-warning">{{ $stats['total_orders'] }}</p>
+            <div class="progress mt-3" style="height: 6px;">
+                <div class="progress-bar bg-warning" role="progressbar" 
+                     style="width: {{ $stats['order_growth'] }}%;"></div>
+            </div>
+            <small class="text-muted">{{ $stats['order_growth'] }}% ce mois</small>
+        </div>
+    </div>
+    
+    <!-- Card Revenus -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card stat-card">
+            <i class="fas fa-chart-line"></i>
+            <h5>Revenus</h5>
+            <p class="text-danger">
+                {{ number_format($stats['total_revenue'], 0, ' ', ' ') }} TND
+            </p>
+            <div class="progress mt-3" style="height: 6px;">
+                <div class="progress-bar bg-danger" role="progressbar" 
+                     style="width: {{ $stats['revenue_growth'] }}%;"></div>
+            </div>
+            <small class="text-muted">{{ $stats['revenue_growth'] }}% ce mois</small>
+        </div>
+    </div>
+</div>
         @endif
 
         <!-- User Info Section -->
@@ -578,18 +644,7 @@
             </div>
             
             <!-- Colonne supplémentaire pour les admins -->
-            @if(auth()->user()->role === 'admin')
-            <div class="col-lg-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Actions rapides</h5>
-                    </div>
-                    <div class="card-body">
-                        <!-- Contenu des actions rapides pour admin -->
-                    </div>
-                </div>
-            </div>
-            @endif
+           
         </div>
     @endif
 </div>
@@ -783,6 +838,29 @@ function loadClientContent(url) {
         window.location.href = url; // Fallback si échec
     });
 }
+function loadMaintenanceContent(url) {
+    fetch(url, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Efface d'abord le contenu existant
+            document.getElementById('dynamic-content').innerHTML = '';
+            
+            // Puis charge le nouveau contenu
+            document.getElementById('maintenance-container').innerHTML = data.content;
+            
+            // Réinitialise les événements
+            initDynamicContentEvents();
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
 
 </script>
 </body>

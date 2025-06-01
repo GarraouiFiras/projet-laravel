@@ -11,6 +11,8 @@ use App\Http\Controllers\AccessoireController;
 use App\Http\Controllers\CommandeController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ContactController;
+
 //use App\Http\Controllers\Auth\ForgotPasswordController;
 //use App\Http\Controllers\Auth\ResetPasswordController;
 
@@ -42,12 +44,13 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Routes protégées par le middleware auth pour les produits
 Route::middleware(['auth'])->group(function () {
-    Route::get('/produit', [ProduitController::class, 'index'])->name('produit.index');
+    
     Route::post('/produit', [ProduitController::class, 'store'])->name('produit.store');
 });
-
+Route::get('/produit', [ProduitController::class, 'index'])->name('produit.index');
 
 Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
 //Route du maintenance 
 Route::resource('maintenance', MaintenanceController::class);
 // Route pour afficher le formulaire d'édition
@@ -110,23 +113,28 @@ Route::middleware(['auth'])->group(function () {
 
     // Gestion des rendez-vous (mise à jour et suppression)
    // Route::put('/rendezvous/{rendezvous}', [ClientController::class, 'updateRendezVous'])->name('client.rendezvous.update');
-    // Ajoutez cette route avec les autres routes de votre application
-Route::delete('/rendezvous/{rendezvous}', [ClientController::class, 'destroyRendezVous'])
-     ->name('client.rendezvous.destroy')
-     ->middleware('auth');
 
+
+Route::delete('/rendezvous/{maintenance}', [ClientController::class, 'destroyRendezVous'])
+    ->name('client.rendezvous.destroy')
+    ->middleware('auth');
     // Suppression d'une commande (globale)
     Route::delete('/commandes/{commande}', [CommandeController::class, 'destroy'])->name('commandes.destroy');
 });
 
 
-
-
-
-
-
-
-
-
 Route::get('/clients/dashboard', [ClientController::class, 'dashboard'])
      ->name('clients.dashboard');
+
+
+     Route::get('/test-stats', function() {
+    $controller = new App\Http\Controllers\DashboardController;
+    return $controller->index()->getData();
+});
+
+// route pour contact 
+Route::get('/contact', function () {
+    return view('forms.contact');
+})->name('contact.form');
+
+Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');

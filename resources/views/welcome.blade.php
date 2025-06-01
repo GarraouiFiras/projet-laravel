@@ -37,14 +37,14 @@
 </head>
 
 <body class="index-page">
+ 
 
 <header id="header" class="header d-flex align-items-center fixed-top">
   <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
-    <a href="index.html" class="logo d-flex align-items-center me-auto me-lg-0">
-      <h1 class="sitename">Showroom GF</h1>
-      
-    </a>
+    <div class="logo d-flex align-items-center me-auto me-lg-0">
+  <h1 class="sitename">Showroom GF</h1>
+</div>
 
     <nav id="navmenu" class="navmenu">
       <ul>
@@ -52,19 +52,18 @@
         <li><a href="#about">À propos</a></li>
         <li><a href="/produit">Produits</a></li>
         <li><a href="#services">Showroom</a></li>
-        <li><a href="#testimonials">Témoignages</a></li>
+        <li><a href="#testimonials">Responsabilités<br>Professionnelles</a></li>
+
         <li><a href="#team">Équipe</a></li>
         <li><a href="#contact">Contact</a></li>
         <li class="dropdown"><a href="#"><span>Options</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
           <ul>
             <li><a href="#">Nos Magasins</a></li>
-            <li><a href="#">Catalogue</a></li>
             <li><a href="#">Services Personnalisés</a></li>
             <li class="nav-item">
-        <a class="nav-link" href="{{ route('client.dashboard') }}">
-            <i class="fas fa-user me-1"></i> Mon compte
-        </a>
-    </li>
+             <a class="nav-link" href="{{ route('client.dashboard') }}">
+             <i class="fas fa-user me-1"></i>Mes Transactions Passées</a>
+            </li>
             @auth
       @if(auth()->user()->role === 'admin') <!-- Vérification du rôle admin -->
       <li><a href="{{ route('formulaire') }}">Ajouter une Voiture</a></li> <!-- Bouton Ajouter une Voiture -->
@@ -109,6 +108,14 @@
 
   </div>
 </header>
+<div class="flash-messages" style="position: fixed; top: 80px; width: 100%; z-index: 1000;">
+    @if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show mx-3" role="alert" style="max-width: 1200px; margin: 0 auto;">
+      <strong>Succès !</strong> {{ session('success') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
+  </div>
 
 
   <main class="main">
@@ -531,9 +538,7 @@
             <img src="assets/img/testimonials/firas.jpg" class="testimonial-img" alt="">
             <h3>Administrateur</h3>
             <h4>Gestion du système</h4>
-            <div class="stars">
-              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-            </div>
+            
             <p>
               <i class="bi bi-quote quote-icon-left"></i>
               <span>
@@ -554,9 +559,7 @@
             <img src="assets/img/testimonials/majd.jpg" class="testimonial-img" alt="">
             <h3>Vendeur</h3>
             <h4>Équipe du showroom</h4>
-            <div class="stars">
-              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-            </div>
+            
             <p>
               <i class="bi bi-quote quote-icon-left"></i>
               <span>
@@ -576,9 +579,7 @@
             <img src="assets/img/testimonials/mohamed.jpg" class="testimonial-img" alt="">
             <h3>Technicien</h3>
             <h4>Équipe du showroom</h4>
-            <div class="stars">
-              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-            </div>
+          
             <p>
               <i class="bi bi-quote quote-icon-left"></i>
               <span>
@@ -598,15 +599,13 @@
             <img src="assets/img/testimonials/amin.jpg" class="testimonial-img" alt="">
             <h3>Gestionnaire des accessoires</h3>
             <h4>Équipe du showroom</h4>
-            <div class="stars">
-              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-            </div>
+           
             <p>
               <i class="bi bi-quote quote-icon-left"></i>
               <span>
                 Rôle principal :<br>
                 - Ajoute et met à jour les accessoires disponibles à la vente.<br>
-                - Gère les stocks et les commandes d’accessoires.<br>
+                - Gère les stocks des accessoires.<br>
                 - Assure la disponibilité des produits pour les clients.
               </span>
               <i class="bi bi-quote quote-icon-right"></i>
@@ -719,7 +718,7 @@
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
         <h2>Contact</h2>
-        <p>Contact Us</p>
+        <p>Contactez-nous</p>
       </div><!-- End Section Title -->
 
       <div class="container" data-aos="fade-up" data-aos-delay="100">
@@ -743,7 +742,7 @@
             <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
               <i class="bi bi-telephone flex-shrink-0"></i>
               <div>
-                <h3>Call Us</h3>
+                <h3>Téléphone</h3>
                 <p>29574024</p>
               </div>
             </div><!-- End Info Item -->
@@ -751,7 +750,7 @@
             <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="500">
               <i class="bi bi-envelope flex-shrink-0"></i>
               <div>
-                <h3>Email Us</h3>
+                <h3>Email </h3>
                 <p>mohamedgarraoui268@gmail.com</p>
               </div>
             </div><!-- End Info Item -->
@@ -759,34 +758,53 @@
           </div>
 
           <div class="col-lg-8">
-            <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
+            <form action="{{ route('contact.submit') }}" method="POST" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
+    @csrf
+
               <div class="row gy-4">
 
-                <div class="col-md-6">
-                  <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
-                </div>
+    <div class="col-md-6">
+        <input type="text" name="name" class="form-control" placeholder="Votre Nom" value="{{ old('name') }}" required>
+    </div>
 
-                <div class="col-md-6 ">
-                  <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
-                </div>
+    <div class="col-md-6">
+        <input type="email" name="email" class="form-control" placeholder="Votre Email" value="{{ old('email') }}" required>
+    </div>
 
-                <div class="col-md-12">
-                  <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
-                </div>
+    <div class="col-md-12">
+        <input type="text" name="subject" class="form-control" placeholder="Sujet" value="{{ old('subject') }}" required>
+    </div>
 
-                <div class="col-md-12">
-                  <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
-                </div>
+    <div class="col-md-12">
+        <textarea name="message" class="form-control" rows="6" placeholder="Votre Message" required>{{ old('message') }}</textarea>
+    </div>
 
-                <div class="col-md-12 text-center">
-                  <div class="loading">Loading</div>
-                  <div class="error-message"></div>
-                  <div class="sent-message">Your message has been sent. Thank you!</div>
+    <div class="col-md-12 text-center">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul style="list-style: none; padding: 0;">
+                    @foreach ($errors->all() as $error)
+                        <li>• {{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-                  <button type="submit">Send Message</button>
-                </div>
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
 
-              </div>
+        <div class="loading">chargement</div>
+        <div class="error-message"></div>
+        <div class="sent-message">Votre message a été envoyé. Merci !</div>
+
+        <button type="submit">Envoyer le Message</button>
+    </div>
+
+</div>
+
             </form>
           </div><!-- End Contact Form -->
 
@@ -810,7 +828,7 @@
             <div class="footer-contact pt-3">
               <p>kairouan</p>
               <p>Hajeb Layoun</p>
-              <p class="mt-3"><strong>Phone:</strong> <span>+29574024</span></p>
+              <p class="mt-3"><strong>Téléphone :</strong> <span>+216 29 574 024</span></p>
               <p><strong>Email:</strong> <span>mohamedgarraoui268@gmail.com</span></p>
             </div>
             <div class="social-links d-flex mt-4">
@@ -824,36 +842,27 @@
           <div class="col-lg-2 col-md-3 footer-links">
             <h4>Useful Links</h4>
             <ul>
-              <li><i class="bi bi-chevron-right"></i> <a href="#"> Home</a></li>
-              <li><i class="bi bi-chevron-right"></i> <a href="#"> About us</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="#"> Accueil</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="#"> À propos</a></li>
               <li><i class="bi bi-chevron-right"></i> <a href="#"> Services</a></li>
-              <li><i class="bi bi-chevron-right"></i> <a href="#"> Terms of service</a></li>
-              <li><i class="bi bi-chevron-right"></i> <a href="#"> Privacy policy</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="#"> Conditions d'utilisation</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="#"> Politique de confidentialité</a></li>
             </ul>
           </div>
 
           <div class="col-lg-2 col-md-3 footer-links">
             <h4>Our Services</h4>
             <ul>
-               <li><i class="bi bi-chevron-right"></i> <a href="#"> Car Sales</a></li>
-               <li><i class="bi bi-chevron-right"></i> <a href="#"> Vehicle Maintenance</a></li>
-               <li><i class="bi bi-chevron-right"></i> <a href="#"> Car Accessories</a></li>
-               <li><i class="bi bi-chevron-right"></i> <a href="#"> Customization Services</a></li>
+               <li><i class="bi bi-chevron-right"></i> <a href="#"> Vente de véhicules</a></li>
+               <li><i class="bi bi-chevron-right"></i> <a href="#"> Maintenance automobile</a></li>
+               <li><i class="bi bi-chevron-right"></i> <a href="#"> Accessoires auto</a></li>
+               <li><i class="bi bi-chevron-right"></i> <a href="#"> Personnalisation</a></li>
                <li><i class="bi bi-chevron-right"></i> <a href="#"> Vehicle Leasing</a></li>
             </ul>
 
           </div>
 
-          <div class="col-lg-4 col-md-12 footer-newsletter">
-            <h4>Our Newsletter</h4>
-            <p>Subscribe to our showroom and receive the latest news about our products and services!</p>
-            <form action="forms/newsletter.php" method="post" class="php-email-form">
-              <div class="newsletter-form"><input type="email" name="email"><input type="submit" value="Subscribe"></div>
-              <div class="loading">Loading</div>
-              <div class="error-message"></div>
-              <div class="sent-message">Your subscription request has been sent. Thank you!</div>
-            </form>
-          </div>
+         
 
         </div>
       </div>
@@ -861,7 +870,7 @@
 
     <div class="copyright">
       <div class="container text-center">
-        <p>© <span>Copyright</span> <strong class="px-1 sitename">GF</strong> <span>All Rights Reserved</span></p>
+        <p>© <span>Copyright</span> <strong class="px-1 sitename">Showroom GF</strong> <span>Tous droits réservés.</span></p>
         <div class="credits">
           <!-- All the links in the footer should remain intact. -->
           <!-- You can delete the links only if you've purchased the pro version. -->

@@ -83,9 +83,11 @@ class CommandeController extends Controller
     $cars = Car::all();
     $accessoires = Accessoire::where('stock', '>', 0)->get();
     
-    if ($request->ajax()) {
-        return response()->json([
-            'html' => view('commandes.create_partial', compact('cars', 'accessoires'))->render()
+ if (request()->expectsJson() || request()->ajax()) {
+        return view('commandes.partials.create', [
+            'cars' => $cars,
+            'accessoires' => $accessoires,
+            'is_partial' => true
         ]);
     }
 
@@ -288,8 +290,14 @@ public function store(Request $request)
             ]);
         }
 
-        return redirect()->route('client.dashboard')
-                       ->with('success', 'Commande supprimée');
+        // Redirection différente selon le rôle
+        if (in_array($user->role, ['admin', 'vendeur'])) {
+            return redirect()->route('commandes.index')
+                           ->with('success', 'Commande supprimée avec succès');
+        } else {
+            return redirect()->route('client.dashboard')
+                           ->with('success', 'Votre commande a été annulée');
+        }
 
     } catch (\Exception $e) {
         DB::rollBack();
@@ -297,7 +305,7 @@ public function store(Request $request)
         if ($request->ajax()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur: ' . $e->getMessage()
+                'message' => 'Erreur lors de la suppression'
             ], 500);
         }
 

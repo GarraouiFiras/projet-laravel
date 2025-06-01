@@ -1,3 +1,4 @@
+@if(!isset($is_partial) || !$is_partial)
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -222,3 +223,6 @@
     </script>
 </body>
 </html>
+@else
+    @yield('content')
+@endif

@@ -8,31 +8,36 @@ use Illuminate\Support\Facades\Hash;
 
 class SignupController extends Controller
 {
-    public function signup(Request $request)
-    {
-        // Validation des données
-        $validatedData = $request->validate([
-            'civilite' => 'required|string|in:M.,Mme,Mlle',
-            'name' => 'required|string|max:255',
-            'telephone' => 'required|digits:8|numeric',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:admin,user,vendeur,technicien,gestionnaire'
-        ]);
+   public function signup(Request $request)
+{
+    // Définir un rôle par défaut (par exemple 'user')
+    $request->merge(['role' => 'user']);
+    
+    // Validation des données
+    $validatedData = $request->validate([
+        'civilite' => 'required|string|in:M.,Mme,Mlle',
+        'name' => 'required|string|max:255',
+        'telephone' => 'required|digits:8|numeric',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8|confirmed',
+    ]);
 
-        // Créer l'utilisateur
-        $user = User::create([
-            'civilite' => $validatedData['civilite'],
-            'name' => $validatedData['name'],
-            'telephone' => $validatedData['telephone'],
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
-            'role' => $validatedData['role']
-        ]);
+    // Créer l'utilisateur avec rôle par défaut
+    $user = User::create([
+        'civilite' => $validatedData['civilite'],
+        'name' => $validatedData['name'],
+        'telephone' => $validatedData['telephone'],
+        'email' => $validatedData['email'],
+        'password' => Hash::make($validatedData['password']),
+        'role' => 'user' // Rôle par défaut
+    ]);
 
-        // Rediriger ou retourner une réponse de succès
-        return redirect('/home')->with('success', 'Inscription réussie !');
-    }
+    // Connecter automatiquement l'utilisateur 
+    auth()->login($user);
+
+    return redirect()->route('home')
+         ->with('success', 'Inscription réussie ! Bienvenue '.$user->name);
+}
 
     public function index()
     {
